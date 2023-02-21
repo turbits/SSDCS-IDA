@@ -22,9 +22,10 @@ For MacOS specifically, Python 2.7 is installed by default. Python 3 may take a 
 
 ### Prerequisites
 
-- Install [SQLite 3.40.1](https://www.sqlite.org/download.html) or higher, ensure it is added to your PATH
+- Install [PostgreSQL 15.2](https://www.postgresql.org/download/) or higher, ensure it is added to your PATH
 - Install [Python 3](https://www.python.org/downloads/), version 3.11.2 or higher, ensure it is added to your PATH
 - Restart your terminal (so PATH changes take effect)
+- Git clone this repository and navigate to the project root
 - Install virtualenv: `pip install virtualenv==20.19.0`
 - Install pipenv: `pip install pipenv==2023.2.18`
 - Install all required packages from the Pipfile (run this in the project root): `pipenv install`
