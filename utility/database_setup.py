@@ -12,10 +12,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 environ.Env.read_env(env_file=os.path.join(BASE_DIR, '.env'))
 
 # connect to PostgreSQL DBMS
-# don't forget to change these in .env to your local postgres super admin credentials/postgres database management system
+# don't forget to change these in .env to your local postgres superuser credentials
 dbcon = None
 
 try:
+  # print(f"DEBUG: {env('PGDBMS_USER')} {env('PGDBMS_HOST')} {env('PGDBMS_PASS')} {env('PGDBMS_PORT')}")
   dbcon = psycopg2.connect(f"user={env('PGDBMS_USER')} host={env('PGDBMS_HOST')} password={env('PGDBMS_PASS')} port={env('PGDBMS_PORT')}")
 except:
   print("CRITICAL: Unable to connect to PostgreSQL DBMS")
@@ -36,7 +37,7 @@ if dbcon is not None:
     print(f"INFO: User {env('DB_USER')} already exists; make sure the password is the same as DB_PASS in the .env file")
   else:
     # doesnt; create ida_system superuser
-    dbcur.execute(f"CREATE ROLE {env('DB_USER')} LOGIN SUPERUSER WITH ENCRYPTED PASSWORD {env('DB_PASS')};")
+    dbcur.execute(f"CREATE ROLE {env('DB_USER')} LOGIN SUPERUSER ENCRYPTED PASSWORD '{env('DB_PASS')}';")
     print(f"INFO: User {env('DB_USER')} created")
 
   # check if ida_db database exists
@@ -52,5 +53,3 @@ if dbcon is not None:
   
   print(f"INFO: Database setup complete")
   dbcon.close()
-else:
-  print("CRITICAL: Unable to connect to PostgreSQL DBMS")
