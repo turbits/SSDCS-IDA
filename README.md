@@ -41,7 +41,7 @@ For MacOS specifically, Python 2.7 is installed by default. Python 3 may take a 
 | Software                                                  | Version        |
 | --------------------------------------------------------- | -------------- |
 | Python                                                    | 3.11.2         |
-| Django (web framework)                                    | 4.1.7          |
+| Django (web framework and basic server)                   | 4.1.7          |
 | PostgreSQL (database)                                     | 15.2           |
 | pip (python package installer)                            | 22.3.1, 23.0.1 |
 | virtualenv (lib - virtual Python environment builder)     | 20.19.0        |

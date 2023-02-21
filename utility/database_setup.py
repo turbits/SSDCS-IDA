@@ -16,7 +16,7 @@ environ.Env.read_env(env_file=os.path.join(BASE_DIR, '.env'))
 dbcon = None
 
 try:
-  dbcon = psycopg2.connect(f'user={env('PGDBMS_USER')} host={env('PGDBMS_HOST')} password={env('PGDBMS_PASS')} port={env('PGDBMS_PORT')}')
+  dbcon = psycopg2.connect(f"user={env('PGDBMS_USER')} host={env('PGDBMS_HOST')} password={env('PGDBMS_PASS')} port={env('PGDBMS_PORT')}")
 except:
   print("CRITICAL: Unable to connect to PostgreSQL DBMS")
 
