@@ -103,6 +103,10 @@ SQL commands must end with a semicolon. Pressing enter without a semicolon will 
 
 ## Issues Working On Project
 
-If you have the project set up, it's very important that you are installing or uninstalling packages using `pipenv` instead of `pip`. This is because `pipenv` will automatically update the `Pipfile` and `Pipfile.lock` files, which are used to ensure that everyone has the same dependencies installed.
+**Issue: "ModuleNotFoundError: No module named 'environ'"**:
 
-If you are running into issues, ensure you are in the pipenv shell: `pipenv shell` in the root directory.
+- Ensure you are in the pipenv shell: `pipenv shell` in the root directory
+
+**Other**:
+
+If you have the project set up, it's very important that you are installing or uninstalling packages using `pipenv` instead of `pip`. This is because `pipenv` uses the virtualenv and will automatically update the `Pipfile` and `Pipfile.lock` files, which are used to ensure that everyone has the same dependencies installed. Read more about pipenv [here](https://pipenv-fork.readthedocs.io/en/latest/basics.html).
