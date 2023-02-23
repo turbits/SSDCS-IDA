@@ -26,6 +26,10 @@ For MacOS specifically, Python 2.7 is installed by default. Python 3 may take a 
 
 - Install [PostgreSQL 15.2](https://www.postgresql.org/download/) or higher, ensure it is added to your PATH
 - Install [Python 3](https://www.python.org/downloads/), version 3.11.2 or higher, ensure it is added to your PATH
+- Make sure you are linting your project with flake8 in your IDE
+  - You can ignore E501 (line too long), or suppress it
+  - You can suppress it by installing the flake8 extension if you're using VSCode, and adding the following to your settings:
+    - `"flake8.args": ["--ignore=E501"],`
 - Restart your terminal (so PATH changes take effect)
 - Git clone this repository and navigate to the project root
 - Install virtualenv: `pip install virtualenv==20.19.0`
