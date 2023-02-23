@@ -14,7 +14,7 @@ This repository is used to store the code for the IDA project. For a full list o
 
 ## How to run the project locally
 
-[I'm having issues running the project or installing packages](#issues-with-project)
+[I'm having issues running the project or installing packages]()
 
 These steps use Unix-style commands. These commands will generally work on Linux and MacOS without issue. For Windows, you must use either Powershell or Git Bash, alternatively install and use [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install).
 
@@ -34,9 +34,11 @@ For MacOS specifically, Python 2.7 is installed by default. Python 3 may take a 
 - Install all required packages from the Pipfile (run this in the project root): `pipenv install`
 - Add the `.env` file provided to you to the root of the project
   - **IMPORTANT**: add your local PostgreSQL superuser credentials to the `.env` file; the default is `postgres` for username, and password is whatever it was set to during/after installation
-- TODO: write steps to set up the database and users (or automate it)
 - Run the following command to start the server:
-  - `pipenv run python manage.py runserver`
+  - `python manage.py runserver`
+- Run the DB migrations for the Django apps:
+  - `python manage.py migrate`
+- TODO: automate database seeding
 - Access the web interface at `http://localhost:8000/`
 
 # Dependencies
@@ -80,7 +82,7 @@ SQL commands must end with a semicolon. Pressing enter without a semicolon will 
 - `\du <role>` - list all roles (users) matching the given pattern
 - `\q` - quit psql interface
 
-## Issues With Project
+## Issues Working On Project
 
 If you have the project set up, it's very important that you are installing or uninstalling packages using `pipenv` instead of `pip`. This is because `pipenv` will automatically update the `Pipfile` and `Pipfile.lock` files, which are used to ensure that everyone has the same dependencies installed.
 
