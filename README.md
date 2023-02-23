@@ -12,9 +12,23 @@ Team Transparency is a group of students in the _University of Essex Online - Se
 
 This repository is used to store the code for the IDA project. For a full list of project technologies used, see the [Dependencies](#dependencies) section.
 
+## What are some important parts of this repository?
+
+📁**config**: this folder contains Django settings
+
+📁**ida**: this folder contains the Django ida app
+
+📁**utility**: this folder contains custom written utility scripts to assist with setup, development, deployment, testing, and common tasks
+
+📄**Pipfile/Pipfile.lock**: these files are used by pipenv to manage dependencies
+
+📄**manage.py**: this file is used to run Django commands
+
+📄**.env**: this file is used to store environment variables, and is not committed to the repository
+
 ## How to run the project locally
 
-[I'm having issues running the project or installing packages]()
+[I'm having issues running the project or installing packages](#issues-working-on-project)
 
 These steps use Unix-style commands. These commands will generally work on Linux and MacOS without issue. For Windows, you must use either Powershell or Git Bash, alternatively install and use [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install).
 
@@ -36,11 +50,12 @@ For MacOS specifically, Python 2.7 is installed by default. Python 3 may take a 
 - Install pipenv: `pip install pipenv==2023.2.18`
 - Run the following to enter the virtual env (run this in the project root): `pipenv shell`
 - Install all required packages from the Pipfile (run this in the project root): `pipenv install`
-- Add the `.env` file provided to you to the root of the project
+- Add the `.env` file provided to you to the root of the project (depending on OS you might need to enable hidden files to see/make this)
   - **IMPORTANT**: add your local PostgreSQL superuser credentials to the `.env` file; the default is `postgres` for username, and password is whatever it was set to during/after installation
 - Run the following command to start the server:
   - `python manage.py runserver`
 - Run the DB migrations for the Django apps:
+  - `python manage.py makemigrations`
   - `python manage.py migrate`
 - TODO: automate database seeding
 - Access the web interface at `http://localhost:8000/`
