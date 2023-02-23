@@ -1,5 +1,4 @@
 import psycopg2
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from pathlib import Path
 import os
 import environ
@@ -18,8 +17,9 @@ dbcon = None
 try:
     # print(f"DEBUG: {env('PGDBMS_USER')} {env('PGDBMS_HOST')} {env('PGDBMS_PASS')} {env('PGDBMS_PORT')}")
     dbcon = psycopg2.connect(f"user={env('PGDBMS_USER')} host={env('PGDBMS_HOST')} password={env('PGDBMS_PASS')} port={env('PGDBMS_PORT')}")
-except:
-    print("CRITICAL: Unable to connect to PostgreSQL DBMS")
+except Exception as e:
+    print("CRITICAL: Unable to connect to PostgreSQL DBMS:")
+    print(e)
 
 if dbcon is not None:
     dbcon.autocommit = True
@@ -51,5 +51,5 @@ if dbcon is not None:
         dbcur.execute(f"CREATE DATABASE {env('DB_NAME')} OWNER {env('DB_USER')} ENCODING 'UTF8';")
         print(f"INFO: Database {env('DB_NAME')} created and {env('DB_USER')} set as owner")
 
-    print(f"INFO: Database setup complete")
+    print("INFO: Database setup complete")
     dbcon.close()
