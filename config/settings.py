@@ -15,7 +15,8 @@ SECRET_KEY = env('SECRET_KEY')
 # TODO: turn off for production
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['localhost', 'ida.local']
+# ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'ida.local']
+ALLOWED_HOSTS = ['*']
 
 # Cookies
 CSRF_COOKIE_SECURE = True
@@ -40,7 +41,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'ida.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -58,7 +59,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ida.wsgi.application'
+#WSGI_APPLICATION = 'wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
