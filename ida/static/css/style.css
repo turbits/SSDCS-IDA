@@ -1,8 +1,27 @@
 :root {
   --color-light: #f0eeed;
   --color-dark: #332c39;
-  --color-accent-blue: #84D2C5;
+  --color-accent-teal: #84D2C5;
   --color-accent-orange: #C27664;
+  --font-display: 'Tilt Warp', sans-serif;
+  --font-sans: 'Inter', sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.text-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2.5rem;
+  line-height: 1.2;
+  color: var(--color-accent-orange);
+}
+
+.accent {
+  color: var(--color-accent-teal);
 }
 
 ul {
@@ -11,14 +30,35 @@ ul {
   padding: 0;
 }
 
-ul li {
-  display: inline-block;
-  margin: 0 10px;
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  height: 80px;
 }
 
-ul li a {
+.nav-item {
+  margin: 0 20px;
+}
+
+.btn-primary {
+  padding: 10px;
+  background-color: var(--color-accent-teal);
+}
+
+.br {
+  border-radius: 5px;
+}
+
+a {
   text-decoration: none;
   color: var(--color-dark);
-  padding: 10px;
-  background-color: var(--color-accent-blue);
+}
+
+a:hover {
+  color: var(--color-accent-orange);
 }

@@ -36,7 +36,7 @@ These steps use Unix-style commands. These commands will generally work on Linux
 
 For MacOS specifically, Python 2.7 is installed by default. Python 3 may take a bit of effort to install, or you may specifically have to use `python3`, `pip3`, etc., for commands. If you have issues with installing Python 3 on MacOS please search online for guides/documentation.
 
-### Prerequisites
+## Prerequisites
 
 - Install [PostgreSQL 15.2](https://www.postgresql.org/download/) or higher, ensure it is added to your PATH
 - Install [Python 3](https://www.python.org/downloads/), version 3.11.2 or higher, ensure it is added to your PATH
@@ -59,7 +59,7 @@ For MacOS specifically, Python 2.7 is installed by default. Python 3 may take a 
 - TODO: automate database seeding
 - Access the web interface at `http://localhost:8000/`
 
-# Dependencies
+## Dependencies
 
 | Software                                                  | Version        |
 | --------------------------------------------------------- | -------------- |
@@ -73,7 +73,7 @@ For MacOS specifically, Python 2.7 is installed by default. Python 3 may take a 
 | psycopg2 (lib - PostgreSQL database adapter for Python)   | 2.9.5          |
 | cryptography (lib - cryptographic recipes and primitives) | 39.0.1         |
 
-# Reading Material
+## Reading Material
 
 - [pipenv Basics](https://pipenv-fork.readthedocs.io/en/latest/basics.html)
 - [Microservices](https://microservices.io/)
@@ -109,3 +109,8 @@ SQL commands must end with a semicolon. Pressing enter without a semicolon will 
 **Other**:
 
 If you have the project set up, it's very important that you are installing or uninstalling packages using `pipenv` instead of `pip`. This is because `pipenv` uses the virtualenv and will automatically update the `Pipfile` and `Pipfile.lock` files, which are used to ensure that everyone has the same dependencies installed. Read more about pipenv [here](https://pipenv-fork.readthedocs.io/en/latest/basics.html).
+
+## Fonts
+
+['Tilt Warp' Font (display)](https://fonts.google.com/specimen/Tilt+Warp)
+['Inter' Font (text)](https://fonts.google.com/specimen/Inter)

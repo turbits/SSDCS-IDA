@@ -19,4 +19,8 @@ def index(request):
 
 
 def dataview(request):
-    return render(request, 'dataview.html')
+    return render(request, 'dataview/index.html')
+
+
+def login(request):
+    return render(request, 'login/index.html')
