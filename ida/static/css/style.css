@@ -1,0 +1,24 @@
+:root {
+  --color-light: #f0eeed;
+  --color-dark: #332c39;
+  --color-accent-blue: #84D2C5;
+  --color-accent-orange: #C27664;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul li {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+ul li a {
+  text-decoration: none;
+  color: var(--color-dark);
+  padding: 10px;
+  background-color: var(--color-accent-blue);
+}
