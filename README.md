@@ -54,9 +54,8 @@ For MacOS specifically, Python 2.7 is installed by default. Python 3 may take a 
   - **IMPORTANT**: add your local PostgreSQL superuser credentials to the `.env` file; the default is `postgres` for username, and password is whatever it was set to during/after installation
 - Run the following command to start the server:
   - `python manage.py runserver`
-- Run the DB migrations for the Django apps:
-  - `python manage.py makemigrations`
-  - `python manage.py migrate`
+- Run the Database and Django setup automation:
+  - `python utility/automate.py`
 - TODO: automate database seeding
 - Access the web interface at `http://localhost:8000/`
 

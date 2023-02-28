@@ -9,6 +9,9 @@ env = environ.Env(
 BASE_DIR = Path(__file__).resolve().parent.parent
 environ.Env.read_env(env_file=os.path.join(BASE_DIR, '.env'))
 
+MEDIA_URL = '/data/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'data/')
+
 # Used by Django to sign cookies and other things
 SECRET_KEY = env('SECRET_KEY')
 
@@ -29,6 +32,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ida.apps.IdaConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +57,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.template.context_processors.media',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -113,3 +119,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# ========================== DJANGO AUTOMATED SETUP
+DJANGO_SUPERUSER_FIRST_NAME = env('DJANGO_SUPERUSER_FIRST_NAME')
+DJANGO_SUPERUSER_LAST_NAME = env('DJANGO_SUPERUSER_LAST_NAME')
+DJANGO_SUPERUSER_USERNAME = env('DJANGO_SUPERUSER_USERNAME')
+DJANGO_SUPERUSER_PASSWORD = env('DJANGO_SUPERUSER_PASSWORD')
+DJANGO_SUPERUSER_EMAIL = env('DJANGO_SUPERUSER_EMAIL')
