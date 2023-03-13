@@ -12,105 +12,64 @@ Team Transparency is a group of students in the _University of Essex Online - Se
 
 This repository is used to store the code for the IDA project. For a full list of project technologies used, see the [Dependencies](#dependencies) section.
 
-## What are some important parts of this repository?
+## How to set up the project
 
-📁**config**: this folder contains Django settings
+For MacOS: Python 2.7 might be installed by default, make sure you're running Python 3.11+ (python --version) in terminal
 
-📁**ida**: this folder contains the Django ida app
+For Windows: use Powershell or Git Bash to run commands (not CMD)
 
-📁**utility**: this folder contains custom written utility scripts to assist with setup, development, deployment, testing, and common tasks
-
-📄**Pipfile/Pipfile.lock**: these files are used by pipenv to manage dependencies
-
-📄**manage.py**: this file is used to run Django commands
-
-📄**.env**: this file is used to store environment variables, and is not committed to the repository
-
-## How to run the project locally
-
-[I'm having issues running the project or installing packages](#issues-working-on-project)
-
-These steps use Unix-style commands. These commands will generally work on Linux and MacOS without issue. For Windows, you must use either Powershell or Git Bash, alternatively install and use [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install).
-
-**CMD will not work.**
-
-For MacOS specifically, Python 2.7 is installed by default. Python 3 may take a bit of effort to install, or you may specifically have to use `python3`, `pip3`, etc., for commands. If you have issues with installing Python 3 on MacOS please search online for guides/documentation.
+- Ensure [prerequisites](#prerequisites) are done
+- See [Run The Project](#run-the-project)
+- For issues running the project see [Issues](#issues)
 
 ## Prerequisites
 
-- Install [PostgreSQL 15.2](https://www.postgresql.org/download/) or higher, ensure it is added to your PATH
-- Install [Python 3](https://www.python.org/downloads/), version 3.11.2 or higher, ensure it is added to your PATH
-- Make sure you are linting your project with flake8 in your IDE
-  - You can ignore E501 (line too long), or suppress it
-  - You can suppress it by installing the flake8 extension if you're using VSCode, and adding the following to your settings:
-    - `"flake8.args": ["--ignore=E501"],`
+- Install [Python 3](https://www.python.org/downloads/), version 3.11.2 or higher, ensure it is added to your PATH (MacOS might have issues with this, might need to do some research)
+- You should be linting your project with flake8 in your IDE
+  - You can ignore E501 (line too long), or if using vscode: suppress it in vscode by adding this to settings: `"flake8.args": ["--ignore=E501"],`
 - Restart your terminal (so PATH changes take effect)
 - Git clone this repository and navigate to the project root
 - Install virtualenv: `pip install virtualenv==20.19.0`
 - Install pipenv: `pip install pipenv==2023.2.18`
+
+## Run the project
+
 - Run the following to enter the virtual env (run this in the project root): `pipenv shell`
 - Install all required packages from the Pipfile (run this in the project root): `pipenv install`
 - Add the `.env` file provided to you to the root of the project (depending on OS you might need to enable hidden files to see/make this)
-  - **IMPORTANT**: add your local PostgreSQL superuser credentials to the `.env` file; the default is `postgres` for username, and password is whatever it was set to during/after installation
-- Run the following command to start the server:
-  - `python manage.py runserver`
-- Run the Database and Django setup automation:
-  - `python utility/automate.py`
 - TODO: automate database seeding
-- Access the web interface at `http://localhost:8000/`
+- Run `python ida.py`
+- Access the web interface at `http://localhost:8080/`
 
 ## Dependencies
 
 | Software                                                  | Version        |
 | --------------------------------------------------------- | -------------- |
 | Python                                                    | 3.11.2         |
-| Django (web framework and basic server)                   | 4.1.7          |
-| PostgreSQL (database)                                     | 15.2           |
+| Bottle (micro web framework and web server)               | 0.12           |
+| sqlite3 (database)                                        | 3.39.4         |
 | pip (python package installer)                            | 22.3.1, 23.0.1 |
 | virtualenv (lib - virtual Python environment builder)     | 20.19.0        |
 | pipenv (lib - Python dependency management)               | 2023.2.18      |
-| django-environ (lib - for secure .env)                    | 0.9.0          |
-| psycopg2 (lib - PostgreSQL database adapter for Python)   | 2.9.5          |
 | cryptography (lib - cryptographic recipes and primitives) | 39.0.1         |
 
 ## Reading Material
 
 - [pipenv Basics](https://pipenv-fork.readthedocs.io/en/latest/basics.html)
 - [Microservices](https://microservices.io/)
-- [Django Docs](https://docs.djangoproject.com/en/4.1/)
-
-# PostgreSQL Commands
-
-- `psql -U postgres` - from a command line; connect to psql interface as the superuser
-
-## psql Commands
-
-SQL commands must end with a semicolon. Pressing enter without a semicolon will add a new line to the command instead of executing it.
-
-- `\l` - list all databases
-  - `SELECT datname FROM pg_database;` - equivalent SQL command
-- `\c <database>` - connect to a database
-  - `USE <database>;` - equivalent SQL command
-- `\dt` - list all tables in the current database
-  - `SELECT * FROM pg_catalog.pg_tables;` - equivalent SQL command
-- `\d <table>` - 'describe' a table, i.e., list all columns in a table
-- `\d+ <table>` - 'describe' a table, i.e., list all columns in a table, and extra data
-- `\du` - list all roles (users)
-  - `SELECT * FROM pg_roles;` - equivalent SQL command
-- `\du <role>` - list all roles (users) matching the given pattern
-- `\q` - quit psql interface
-
-## Issues Working On Project
-
-**Issue: "ModuleNotFoundError: No module named 'environ'"**:
-
-- Ensure you are in the pipenv shell: `pipenv shell` in the root directory
-
-**Other**:
-
-If you have the project set up, it's very important that you are installing or uninstalling packages using `pipenv` instead of `pip`. This is because `pipenv` uses the virtualenv and will automatically update the `Pipfile` and `Pipfile.lock` files, which are used to ensure that everyone has the same dependencies installed. Read more about pipenv [here](https://pipenv-fork.readthedocs.io/en/latest/basics.html).
 
 ## Fonts
 
 ['Tilt Warp' Font (display)](https://fonts.google.com/specimen/Tilt+Warp)
 ['Inter' Font (text)](https://fonts.google.com/specimen/Inter)
+
+## Issues
+
+**Commands aren't working correctly or at all**:
+
+- make sure you're using Powershell or Git Bash on Windows
+- make sure you're using Python 3.11 or higher
+
+**ModuleNotFoundError: No module named 'bottle'**:
+
+- make sure you're running the project in the virtual environment - run `pipenv shell` in the root of the project
