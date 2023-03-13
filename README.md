@@ -19,7 +19,7 @@ For MacOS: Python 2.7 might be installed by default, make sure you're running Py
 For Windows: use Powershell or Git Bash to run commands (not CMD)
 
 - Ensure [prerequisites](#prerequisites) are done
-- See [Run The Project](#run-the-project)
+- See [Run the project](#run-the-project)
 - For issues running the project see [Issues](#issues)
 
 ## Prerequisites
@@ -62,6 +62,7 @@ For Windows: use Powershell or Git Bash to run commands (not CMD)
 ## Fonts
 
 ['Tilt Warp' Font (display)](https://fonts.google.com/specimen/Tilt+Warp)
+
 ['Inter' Font (text)](https://fonts.google.com/specimen/Inter)
 
 ## Issues
