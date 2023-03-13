@@ -1,0 +1,91 @@
+/* ====================== VARIABLES */
+
+:root {
+  --color-light: #f0eeed;
+  --color-dark: #332c39;
+  --color-accent-teal: #84D2C5;
+  --color-accent-orange: #C27664;
+  --color-accent-yellow: #F2D9B9;
+  --font-display: 'Tilt Warp', sans-serif;
+  --font-sans: 'Inter', sans-serif;
+}
+
+/* ====================== BASE */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+}
+
+div.content {
+  padding: 20px;
+}
+
+.text-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2.5rem;
+  line-height: 1.2;
+  color: var(--color-accent-yellow);
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.br {
+  border-radius: 5px;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-light);
+}
+
+/* ====================== NAV */
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  height: 80px;
+}
+
+.nav-item {
+  margin: 0 20px;
+}
+
+.nav-title {
+  color: var(--color-light);
+}
+
+.nav-title:hover {
+  color: var(--color-accent-yellow);
+}
+
+/* ====================== BUTTONS */
+
+.btn-primary {
+  padding: 10px;
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  transition: all .1s;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-accent-yellow);
+  color: var(--color-dark);
+}
+
+/* ====================== MISC/TEMP */
+
+li.temp-list-item {
+  margin: 40px 20px;
+}

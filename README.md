@@ -55,6 +55,7 @@ For Windows: use Powershell or Git Bash to run commands (not CMD)
 
 ## Reading Material
 
+- [Bottle Templating](https://bottlepy.org/docs/stable/stpl.html)
 - [pipenv Basics](https://pipenv-fork.readthedocs.io/en/latest/basics.html)
 - [Microservices](https://microservices.io/)
 

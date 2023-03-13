@@ -1,8 +1,9 @@
-import uuid
-from django.db import models
-
-# Create your models here.
-# User model is included by default in Django from the django.contrib.auth system
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('dataview/', views.dataview, name='dataview'),
+    path('login/', views.login, name='login'),
+    path('admin/', admin.site.urls),
+]
 
 
 class DataFile(models.Model):
