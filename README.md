@@ -37,7 +37,7 @@ For Windows: use Powershell or Git Bash to run commands (not CMD)
 - Run the following to enter the virtual env (run this in the project root): `pipenv shell`
 - Install all required packages from the Pipfile (run this in the project root): `pipenv install`
 - Add the `.env` file provided to you to the root of the project (depending on OS you might need to enable hidden files to see/make this)
-- TODO: automate database seeding
+- If you don't have a database file (ida.db in project root), run `python database.py` to create one. If you have one and you run this, it will overwrite it with default values. Use a SQLite viewer to view the database.
 - Run `python ida.py`
 - Access the web interface at `http://localhost:8080/`
 
