@@ -1,10 +1,31 @@
-from bottle import get, post, delete, route
+import uuid
+import sqlite3
+from bottle import get, post, delete, route, request, response
+
+
+connection = sqlite3.connect("ida.db")
+cursor = connection.cursor()
 
 
 # CREATE user
 @post('/users')
 def create_user():
-    pass
+    # TODO: add try/except
+    print("🟢 USERS_ENDPOINT:CREATE")
+    _uuid = str(uuid.uuid4())
+    data = request.json
+    # TODO: write models for data schemas (user, record, and log)
+    # TODO: write validation function for req data
+    # TODO: write sanitization function for req data
+
+    # TODO: DEBUG REMOVE
+    print(data)
+
+    # after validation and sanitization, insert into database
+    cursor.execute(f"INSERT INTO users (username, first_name, last_name, password, last_logon, created_at, is_admin, is_disabled) VALUES ('{data.username}', '{data.first_name}', '{data.last_name}', '{data.password}', DATE('now'), DATE('now'), {data.is_admin}, {data.is_disabled})")
+    cursor.execute("SELECT id FROM users WHERE username = '{req.username}'")
+    user_id = cursor.fetchone()[0]
+    cursor.execute(f"INSERT INTO user_ref (uuid, user_id) VALUES ('{_uuid}', {user_id})")
 
 
 # READ (get) all users
