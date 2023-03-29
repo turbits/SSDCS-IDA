@@ -8,20 +8,11 @@ import time
 
 
 # CREATE (post) user
-@post('/users')
+@route('/users', method='POST')
 def create_user():
-    print("🔵 ENDPOINT:POST /USERS")
+    print("🔵 ENDPOINT:/users POST")
 
-    connection = None
-    cursor = None
-
-    try:
-        connection = sqlite3.connect("ida.db")
-        cursor = connection.cursor()
-        print("🟢 OK(DB): Connected to database.")
-    except:
-        print("🔴 ERROR(DB): Could not connect to database.")
-        return {"status": "ERROR", "message": "Could not connect to database."}
+    con, cursor = connect_db()
 
     try:
         # combine user data into a dict
@@ -66,7 +57,7 @@ def create_user():
         # insert and commit the new user to the DB
         cursor.execute('INSERT INTO users (username, first_name, last_name, password, last_logon, created_at, is_admin, is_disabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (user.username, user.first_name, user.last_name, user.password, user.last_logon, user.created_at, user.is_admin, user.is_disabled,))
 
-        connection.commit()
+        con.commit()
         print(f"🟢 OK(200): User created successfully: {user.username}")
         return {"status": "OK", "message": f"User created successfully: {user.username}"}
 
@@ -83,30 +74,21 @@ def create_user():
         return {"status": "ERROR", "message": f"Unhandled exception when creating user: {str(e)}"}
 
     # close the connection
-    connection.close()
+    con.close()
 
 
 # READ (get) all users
-@get('/users')
+@route('/users', method='GET')
 def get_all_users():
-    print("🔵 ENDPOINT:GET /USERS")
+    print("🔵 ENDPOINT:/users GET")
 
-    connection = None
-    cursor = None
-
-    try:
-        connection = sqlite3.connect("ida.db")
-        cursor = connection.cursor()
-        print("🟢 OK(DB): Connected to database.")
-    except:
-        print("🔴 ERROR(DB): Could not connect to database.")
-        return {"status": "ERROR", "message": "Could not connect to database."}
+    con, cursor = connect_db()
 
     try:
         # fetch all users
         cursor.execute('SELECT * FROM users')
         rows = cursor.fetchall()
-        
+
         print(rows)
 
         # create a dictionary list of users
