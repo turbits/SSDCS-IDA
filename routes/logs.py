@@ -1,21 +1,21 @@
-from bottle import get, post, delete, route
+from bottle import route
 
 
 # CREATE log
-@post('/logs')
+@route('/logs', method="POST")
 def create_log():
     pass
 
 
 # READ (get) all logs
-@get('/logs')
+@route('/logs', method="GET")
 def get_all_logs():
     # fetch all logs from database
     pass
 
 
 # READ (get) log by id
-@get('/logs/<id>')
+@route('/logs/<id>', method="GET")
 def get_log(id):
     pass
 
@@ -27,6 +27,6 @@ def update_log(id):
 
 
 # DELETE log by id
-@delete('logs/<id>')
+@route('logs/<id>', method='DELETE')
 def delete_log(id):
     pass

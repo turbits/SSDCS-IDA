@@ -1,21 +1,21 @@
-from bottle import get, post, delete, route
+from bottle import route
 
 
 # CREATE record
-@post('/records')
+@route('/records', method="POST")
 def create_record():
     pass
 
 
 # READ (get) all records
-@get('/records')
+@route('/records', method="GET")
 def get_all_records():
     # fetch all records from database
     pass
 
 
 # READ (get) record by id
-@get('/records/<id>')
+@route('/records/<id>', method="GET")
 def get_record(id):
     pass
 
@@ -27,6 +27,6 @@ def update_record(id):
 
 
 # DELETE record by id
-@delete('records/<id>')
+@route('records/<id>', method='DELETE')
 def delete_record(id):
     pass
