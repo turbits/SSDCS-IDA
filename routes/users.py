@@ -33,7 +33,7 @@ def create_user():
             "last_name": request.forms.get('last_name'),
             "password": request.forms.get('password'),
             "last_logon": None,
-            "created_at": time.time(),
+            "created_at": int(time.time()),
             "is_admin": request.forms.get('is_admin'),
             "is_disabled": request.forms.get('is_disabled')
         }
