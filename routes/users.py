@@ -67,7 +67,7 @@ def create_user():
 
         # we create a new user dict of the newly inserted user
         # row = the selected row from "fetchone()"
-        # row[0] = the first column in the row, which is the user_id
+        # row[0] = the first column in the row, which is the id
         # etc
         # These columns are in the same order as the columns in the users table and as they appear in the User model
         newuser = {
@@ -83,7 +83,7 @@ def create_user():
         }
 
         # insert and commit the new user_ref to the DB
-        cursor.execute('INSERT INTO user_ref (uuid, user_id) VALUES (?, ?)', (_uuid, newuser['id'],))
+        cursor.execute('INSERT INTO user_ref (uuid, id) VALUES (?, ?)', (_uuid, newuser['id'],))
 
         # commit changes
         con.commit()
@@ -165,9 +165,9 @@ def get_all_users():
 # In a real-world scenario you wouldn't be using Bottle anyway, but you would be using GET here, as GET is the proper HTTP method in this case.
 
 # READ (POST; PLEASE READ THE ABOVE) user by id
-@route('/users/<user_id:int>', method='POST')
-def get_user(user_id):
-    print("🔵 ENDPOINT:/users/<user_id> POST(Should be GET; read code comments)")
+@route('/users/<id:int>', method='POST')
+def get_user(id):
+    print("🔵 ENDPOINT:/users/<id> POST(Should be GET; read code comments)")
 
     con = None
     cursor = None
@@ -176,7 +176,7 @@ def get_user(user_id):
         con, cursor = connect_db()
 
         # select users with the id
-        cursor.execute('SELECT * FROM users WHERE id =?', (user_id,))
+        cursor.execute('SELECT * FROM users WHERE id =?', (id,))
         row = cursor.fetchone()
 
         if row is None:
@@ -203,9 +203,9 @@ def get_user(user_id):
 
 
 # UPDATE (put) user by id
-@route('/users/<user_id:int>', method='PUT')
-def update_user(user_id):
-    print("🔵 ENDPOINT:/users/<user_id> PUT")
+@route('/users/<id:int>', method='PUT')
+def update_user(id):
+    print("🔵 ENDPOINT:/users/<id> PUT")
 
     con = None
     cursor = None
@@ -221,7 +221,7 @@ def update_user(user_id):
         con, cursor = connect_db()
 
         # select users with the id
-        cursor.execute('SELECT * FROM users WHERE id =?', (user_id,))
+        cursor.execute('SELECT * FROM users WHERE id =?', (id,))
         row = cursor.fetchone()
 
         if row is None:
@@ -253,7 +253,7 @@ def update_user(user_id):
                 # which would be "UPDATE users SET username =?, "
                 query += f"{key} =?, "
             query = query[:-2] + " WHERE id =?"  # the :-2 removes the last comma and space in the query, then we append the WHERE clause
-            values = list(updated_fields.values()) + [user_id]  # we add the user_id to the end of the values list
+            values = list(updated_fields.values()) + [id]  # we add the id to the end of the values list
 
             # we execute our crafted query
             user = cursor.execute(query, tuple(values))
@@ -261,7 +261,7 @@ def update_user(user_id):
             con.commit()
 
         # now we want to get the updated user and return it
-        cursor.execute('SELECT * FROM users WHERE id =?', (user_id,))
+        cursor.execute('SELECT * FROM users WHERE id =?', (id,))
         row = cursor.fetchone()
         user = {
             "id": row[0], "username": row[1], "first_name": row[2], "last_name": row[3], "password": row[4], "last_logon": row[5], "created_at": row[6], "is_admin": bool(row[7]), "is_disabled": bool(row[8])
@@ -287,9 +287,9 @@ def update_user(user_id):
 
 
 # DELETE (delete) user by id
-@route('/users/<user_id:int>', method='DELETE')
-def delete_user(user_id):
-    print("🔵 ENDPOINT:/users/<user_id> DELETE")
+@route('/users/<id:int>', method='DELETE')
+def delete_user(id):
+    print("🔵 ENDPOINT:/users/<id> DELETE")
 
     con = None
     cursor = None
@@ -298,7 +298,7 @@ def delete_user(user_id):
         con, cursor = connect_db()
 
         # select user with id
-        cursor.execute('SELECT * FROM users WHERE id =?', (user_id,))
+        cursor.execute('SELECT * FROM users WHERE id =?', (id,))
         row = cursor.fetchone()
 
         if row is None:
@@ -307,7 +307,7 @@ def delete_user(user_id):
         # TODO: check for admin
 
         # delete user
-        cursor.execute('DELETE FROM users WHERE id =?', (user_id,))
+        cursor.execute('DELETE FROM users WHERE id =?', (id,))
 
         con.commit()
         close_db(con, cursor)
