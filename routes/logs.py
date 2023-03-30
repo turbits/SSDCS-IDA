@@ -56,14 +56,16 @@ def create_log(level, message, author_id, author_name):
     # ValueError can be raised by validation or DB checks
     except ValueError as e:
         response.status = 400
-        close_db(con, cursor)
+        if con is not None and cursor is not None:
+            close_db(con, cursor)
         print(f"🔴 ERROR(400): {str(e)}")
         return {"message": f"Invalid request body: {str(e)}"}
 
     # unhandled
     except Exception as e:
         response.status = 500
-        close_db(con, cursor)
+        if con is not None and cursor is not None:
+            close_db(con, cursor)
         print(f"🔴 ERROR(500): {str(e)}")
         return {"message": f"Unhandled exception when creating logevent: {str(e)}"}
 
@@ -107,7 +109,8 @@ def get_all_logs():
         return {"data": logevents}
     except Exception as e:
         response.status = 500
-        close_db(con, cursor)
+        if con is not None and cursor is not None:
+            close_db(con, cursor)
         print(f"🔴 ERROR(500): {str(e)}")
         return {"message": f"Unhandled exception when fetching logevents: {str(e)}"}
 
@@ -147,11 +150,13 @@ def get_log(id):
         return {"data": logevent}
     except ValueError:
         response.status = 404
-        close_db(con, cursor)
+        if con is not None and cursor is not None:
+            close_db(con, cursor)
         print("🔴 ERROR(404): LogEvent not found")
         return {"message": "LogEvent not found"}
     except Exception as e:
         response.status = 500
-        close_db(con, cursor)
+        if con is not None and cursor is not None:
+            close_db(con, cursor)
         print(f"🔴 ERROR(500): {str(e)}")
         return {"message": f"Unhandled exception when fetching logevent: {str(e)}"}

@@ -97,14 +97,16 @@ def create_user():
     # ValueError can be raised by validation or DB checks
     except ValueError as e:
         response.status = 400
-        close_db(con, cursor)
+        if con is not None and cursor is not None:
+            close_db(con, cursor)
         print(f"🔴 ERROR(400): {str(e)}")
         return {"message": f"Invalid request body: {str(e)}"}
 
     # unhandled
     except Exception as e:
         response.status = 500
-        close_db(con, cursor)
+        if con is not None and cursor is not None:
+            close_db(con, cursor)
         print(f"🔴 ERROR(500): {str(e)}")
         return {"message": f"Unhandled exception when creating user: {str(e)}"}
 
@@ -151,7 +153,8 @@ def get_all_users():
         return {"data": users}
     except Exception as e:
         response.status = 500
-        close_db(con, cursor)
+        if con is not None and cursor is not None:
+            close_db(con, cursor)
         print(f"🔴 ERROR(500): {str(e)}")
         return {"message": f"Unhandled exception when fetching users: {str(e)}"}
 
@@ -192,12 +195,14 @@ def get_user(id):
         return {"data": user}
     except ValueError:
         response.status = 404
-        close_db(con, cursor)
+        if con is not None and cursor is not None:
+            close_db(con, cursor)
         print("🔴 ERROR(404): User not found")
         return {"message": "User not found"}
     except Exception as e:
         response.status = 500
-        close_db(con, cursor)
+        if con is not None and cursor is not None:
+            close_db(con, cursor)
         print(f"🔴 ERROR(500): {str(e)}")
         return {"message": f"Unhandled exception when fetching user: {str(e)}"}
 
@@ -276,12 +281,14 @@ def update_user(id):
         return {"data": user}
     except ValueError:
         response.status = 404
-        close_db(con, cursor)
+        if con is not None and cursor is not None:
+            close_db(con, cursor)
         print("🔴 ERROR(404): User not found")
         return {"message": "User not found"}
     except Exception as e:
         response.status = 500
-        close_db(con, cursor)
+        if con is not None and cursor is not None:
+            close_db(con, cursor)
         print(f"🔴 ERROR(500): {str(e)}")
         return {"message": f"Unhandled exception when updating user: {str(e)}"}
 
@@ -320,11 +327,13 @@ def delete_user(id):
 
     except ValueError:
         response.status = 404
-        close_db(con, cursor)
+        if con is not None and cursor is not None:
+            close_db(con, cursor)
         print("🔴 ERROR(404): User not found")
         return {"message": "User not found"}
     except Exception as e:
         response.status = 500
-        close_db(con, cursor)
+        if con is not None and cursor is not None:
+            close_db(con, cursor)
         print(f"🔴 ERROR(500): {str(e)}")
         return {"message": f"Unhandled exception when updating user: {str(e)}"}
