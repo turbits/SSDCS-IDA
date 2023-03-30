@@ -1,6 +1,6 @@
 import uuid
 import sqlite3
-from bottle import route, request, response, get, template
+from bottle import route, request, response, template
 import re
 from models.user import User
 from utility.validate_data import validate_data, validate_username, validate_password
