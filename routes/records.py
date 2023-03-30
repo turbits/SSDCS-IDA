@@ -213,7 +213,6 @@ def update_record(id):
 
         updated_fields['revised_at'] = int(time.time())
 
-
         # craft the SQL query based on fields that were updated
         if updated_fields:
             query = 'UPDATE records SET '
