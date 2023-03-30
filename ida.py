@@ -4,10 +4,6 @@ from bottle import run, debug, static_file, abort, error, route
 
 # sys.path.insert(0, os.path.dirname("routes/"))
 
-# any "os.getenv" is getting values from the .env file
-# .env should be in the project root (same level as this file)
-
-
 # set up static file serving (for things like css static path, js, etc.)
 # if you need to access a static file it should be as simple as putting the file in the /static folder
 # and accessing it as <filename> (e.g. css/style.css in IDAs case

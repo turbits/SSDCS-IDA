@@ -3,7 +3,7 @@ import os
 import uuid
 import time
 
-# TODO: add a warning/confirmation if the database file already exists
+# QOL: add a warning/confirmation if the database file already exists
 
 # check if database file exists;
 # if it does we delete it, recreate it, and reseed it
@@ -13,8 +13,8 @@ except OSError:
     pass
 
 # connect to the database; this will create the database file if it doesnt exist
-connection = sqlite3.connect("ida.db")
-cursor = connection.cursor()
+con = sqlite3.connect("ida.db")
+cursor = con.cursor()
 
 # ===================== USERREF TABLE =====================
 # This is a table that stores a UUID and a user id (foreign key)
@@ -28,10 +28,8 @@ cursor = connection.cursor()
 # CREATE USER_REF TABLE
 cursor.execute("CREATE TABLE IF NOT EXISTS user_ref (id INTEGER PRIMARY KEY AUTOINCREMENT, uuid TEXT, user_id INTEGER, FOREIGN KEY(user_id) REFERENCES users(id))")
 
-
-# con.execute("CREATE TABLE IF NOT EXISTS user_ref (id INTEGER PRIMARY KEY AUTOINCREMENT, uuid TEXT, user_id KEY(user_id) REFERENCES users(id))")
-
 # ===================== USERS TABLE =====================
+# see models/user for the User model
 # CREATE USERS TABLE
 cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, first_name TEXT, last_name TEXT, password TEXT, last_logon INTEGER, created_at INTEGER, is_admin BOOLEAN, is_disabled BOOLEAN)")
 
@@ -56,17 +54,19 @@ user_username = user[1]
 cursor.execute("INSERT INTO user_ref (uuid, user_id) VALUES (?, ?)", (str(uuid.uuid4()), user_id,))
 
 # ===================== RECORDS TABLE =====================
+# see models/record for the Record model
 # CREATE RECORDS TABLE
 cursor.execute("CREATE TABLE IF NOT EXISTS records (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, created_at DATETIME, revised_at DATETIME, file TEXT)")
 # seed with some data
 cursor.execute("INSERT INTO records (name, created_at, revised_at, file) VALUES (?, ?, ?, ?)", ('Record 1', int(time.time()), None, "{'data': 'Record 1'}",))
 
 # ===================== LOGS TABLE =====================
+# see models/log_event for the LogEvent model
 # CREATE LOGS TABLE
-cursor.execute("CREATE TABLE IF NOT EXISTS logs (id INTEGER PRIMARY KEY AUTOINCREMENT, status TEXT, message TEXT, created_at DATETIME, author_id INTEGER, author_name TEXT)")
+cursor.execute("CREATE TABLE IF NOT EXISTS logs (id INTEGER PRIMARY KEY AUTOINCREMENT, level TEXT, message TEXT, created_at DATETIME, author_id INTEGER, author_name TEXT)")
 # add initial LogEvent
-cursor.execute("INSERT INTO logs (status, message, created_at, author_id, author_name) VALUES (?, ?, ?, ?, ?)", ('INFO', 'Initial LogEvent', int(time.time()), admin_id, admin_username,))
+cursor.execute("INSERT INTO logs (level, message, created_at, author_id, author_name) VALUES (?, ?, ?, ?, ?)", ('INFO', 'Initial LogEvent', int(time.time()), admin_id, admin_username,))
 
-# COMMIT & CLOSE CONNECTION
-connection.commit()
-connection.close()
+# COMMIT & CLOSE con
+con.commit()
+con.close()
