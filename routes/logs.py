@@ -39,18 +39,19 @@ def create_log(level, message, author_id, author_name):
 
         # create a new LogEvent object and spread the logevent data into it
         logevent = LogEvent(**log_data)
-        print(f"🔵 LOG: {logevent.__dict__}")
+        # print(f"🔵 LOG: {logevent.__dict__}")
 
         # insert and commit the logevent to the DB
         cursor.execute('INSERT INTO logs (level, message, created_at, author_id, author_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (logevent.level, logevent.message, logevent.created_at, logevent.author_id, logevent.author_name,))
 
         # commit changes
         con.commit()
-        # close the connection
-        close_db(con, cursor)
 
+        # print to server console
         print(f"🟢 OK(200): Log created for {logevent.message}, initiatior:{logevent.author_name}")
 
+        # close the connection
+        close_db(con, cursor)
         return
 
     # ValueError can be raised by validation or DB checks
@@ -58,7 +59,9 @@ def create_log(level, message, author_id, author_name):
         response.status = 400
         if con is not None and cursor is not None:
             close_db(con, cursor)
+        # print to server console
         print(f"🔴 ERROR(400): {str(e)}")
+        # return message
         return {"message": f"Invalid request body: {str(e)}"}
 
     # unhandled
@@ -66,7 +69,9 @@ def create_log(level, message, author_id, author_name):
         response.status = 500
         if con is not None and cursor is not None:
             close_db(con, cursor)
+        # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
+        # return message
         return {"message": f"Unhandled exception when creating logevent: {str(e)}"}
 
 
@@ -102,16 +107,20 @@ def get_all_logs():
         response.status = 200
         response.body = logevents
 
+        # print to server console
+        print("🟢 OK(200): LogEvents fetched successfully")
+
         # close the connection
         close_db(con, cursor)
-
-        print("🟢 OK(200): LogEvents fetched successfully")
+        # return message
         return {"data": logevents}
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
             close_db(con, cursor)
+        # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
+        # return message
         return {"message": f"Unhandled exception when fetching logevents: {str(e)}"}
 
 
@@ -145,6 +154,9 @@ def get_log(id):
 
         response.content_type = 'application/json'
         response.status = 200
+
+        # print to server console
+        print("🟢 OK(200): LogEvent fetched successfully")
         # close the connection
         close_db(con, cursor)
         return {"data": logevent}
@@ -152,11 +164,15 @@ def get_log(id):
         response.status = 404
         if con is not None and cursor is not None:
             close_db(con, cursor)
+        # print to server console
         print("🔴 ERROR(404): LogEvent not found")
+        # return message
         return {"message": "LogEvent not found"}
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
             close_db(con, cursor)
+        # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
+        # return message
         return {"message": f"Unhandled exception when fetching logevent: {str(e)}"}

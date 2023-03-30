@@ -40,7 +40,7 @@ def create_user():
 
         # create a new User object and spread the user data into it
         user = User(**user_data)
-        print(f"🔵 USER: {user.__dict__}")
+        # print(f"🔵 USER: {user.__dict__}")
         # generate a new UUID
         _uuid = str(uuid.uuid4())
 
@@ -87,10 +87,12 @@ def create_user():
 
         # commit changes
         con.commit()
+
+        # print to server console
+        print(f"🟢 OK(200): User created successfully: {newuser['username']}")
+
         # close the connection
         close_db(con, cursor)
-
-        print(f"🟢 OK(200): User created successfully: {newuser['username']}")
         # return the new user
         return {"data": newuser}
 
@@ -99,7 +101,9 @@ def create_user():
         response.status = 400
         if con is not None and cursor is not None:
             close_db(con, cursor)
+        # print to server console
         print(f"🔴 ERROR(400): {str(e)}")
+        # return message
         return {"message": f"Invalid request body: {str(e)}"}
 
     # unhandled
@@ -107,7 +111,9 @@ def create_user():
         response.status = 500
         if con is not None and cursor is not None:
             close_db(con, cursor)
+        # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
+        # return message
         return {"message": f"Unhandled exception when creating user: {str(e)}"}
 
 
@@ -146,16 +152,19 @@ def get_all_users():
         response.status = 200
         response.body = users
 
+        # print to server console
+        print("🟢 OK(200): Users fetched successfully")
+
         # close the connection
         close_db(con, cursor)
-
-        print("🟢 OK(200): Users fetched successfully")
         return {"data": users}
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
             close_db(con, cursor)
+        # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
+        # return message
         return {"message": f"Unhandled exception when fetching users: {str(e)}"}
 
 
@@ -190,6 +199,10 @@ def get_user(id):
         }
         response.content_type = 'application/json'
         response.status = 200
+
+        # print to server console
+        print(f'🟢 OK(200): User fetched: {user["username"]}')
+
         # close the connection
         close_db(con, cursor)
         return {"data": user}
@@ -197,13 +210,17 @@ def get_user(id):
         response.status = 404
         if con is not None and cursor is not None:
             close_db(con, cursor)
+        # print to server console
         print("🔴 ERROR(404): User not found")
+        # return message
         return {"message": "User not found"}
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
             close_db(con, cursor)
+        # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
+        # return message
         return {"message": f"Unhandled exception when fetching user: {str(e)}"}
 
 
@@ -248,6 +265,8 @@ def update_user(id):
         if is_disabled is not None:
             updated_fields['is_disabled'] = bool(is_disabled)
 
+        updated_fields['updated_at'] = int(time.time())
+
         # craft the SQL query based on fields that were updated
         if updated_fields:
             query = 'UPDATE users SET '
@@ -275,6 +294,9 @@ def update_user(id):
         response.content_type = "application/json"
         response.status = 200
 
+        # print to server console
+        print(f'🟢 OK(200): User updated: {user["username"]}')
+
         # close the DB connection
         close_db(con, cursor)
         # return the updated user
@@ -283,13 +305,17 @@ def update_user(id):
         response.status = 404
         if con is not None and cursor is not None:
             close_db(con, cursor)
+        # print to server console
         print("🔴 ERROR(404): User not found")
+        # return message
         return {"message": "User not found"}
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
             close_db(con, cursor)
+        # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
+        # return message
         return {"message": f"Unhandled exception when updating user: {str(e)}"}
 
 
@@ -307,6 +333,7 @@ def delete_user(id):
         # select user with id
         cursor.execute('SELECT * FROM users WHERE id =?', (id,))
         row = cursor.fetchone()
+        username = row[1]
 
         if row is None:
             raise ValueError()
@@ -315,25 +342,32 @@ def delete_user(id):
 
         # delete user
         cursor.execute('DELETE FROM users WHERE id =?', (id,))
-
+        # commit changes
         con.commit()
-        close_db(con, cursor)
 
         response.content_type = "application/json"
         response.status = 200
 
-        # row[1] is the username
-        return {"message": f"User '{row[1]}' deleted successfully"}
+        # print to server console
+        print(f'🟢 OK(200): User deleted: {username}')
+        # close connection
+        close_db(con, cursor)
+        # return message
+        return {"message": f"User '{username}' deleted successfully"}
 
     except ValueError:
         response.status = 404
         if con is not None and cursor is not None:
             close_db(con, cursor)
+        # print to server console
         print("🔴 ERROR(404): User not found")
+        # return message
         return {"message": "User not found"}
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
             close_db(con, cursor)
+        # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
+        # return message
         return {"message": f"Unhandled exception when updating user: {str(e)}"}
