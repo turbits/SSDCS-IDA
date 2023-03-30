@@ -2,7 +2,7 @@ import datetime
 
 
 class User:
-    def __init__(self, username: str, first_name: str, last_name: str, password: str, last_logon: datetime.datetime, created_at: datetime.datetime, is_admin: bool = False, is_disabled: bool = False):
+    def __init__(self, username: str, first_name: str, last_name: str, password: str, last_logon: int, created_at: int, is_admin: bool = False, is_disabled: bool = False):
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
