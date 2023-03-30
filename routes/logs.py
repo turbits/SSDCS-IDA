@@ -1,32 +1,157 @@
-from bottle import route
+import uuid
+import sqlite3
+from bottle import route, request, response, get, template
+import re
+from models.log_event import LogEvent
+from utility.validate_data import validate_data, validate_username, validate_password
+from utility.db import connect_db, close_db
+import time
+
+# Because LogEvents are meant to be immutable, i.e. they are read only by anyone except the system, we will not implement create, update, or delete routes or endpoints for LogEvents.
+# Instead the system will call internal functions to create LogEvents, and the only endpoints that will be exposed are GET endpoints to fetch all LogEvents or a single LogEvent by id.
 
 
-# CREATE log
-@route('/logs', method="POST")
-def create_log():
-    pass
+# CREATE log function
+# NOT an endpoint, but a function that can be called by other endpoints to create a log (see above for explanation)
+def create_log(level, message, author_id, author_name):
+    print("🔵 LOGEVENT:CREATE")
+
+    con = None
+    cursor = None
+
+    try:
+        con, cursor = connect_db()
+
+        # combine log data into a dict
+        # created_at is initialized to the current unix timestamp; we can use `datetime.datetime.fromtimestamp(<timestamp>)` to convert it to a human readable datetime
+        log_data = {
+            "level": level,
+            "message": message,
+            "created_at": int(time.time()),
+            "author_id": author_id,
+            "author_name": author_name,
+        }
+
+        # validate the logevent using the LogEvent model and the data above, passed through a generic validation function
+        validation_check = validate_data(log_data, LogEvent)
+        if validation_check is not None:
+            raise ValueError(validation_check)
+
+        # create a new LogEvent object and spread the logevent data into it
+        logevent = LogEvent(**log_data)
+        print(f"🔵 LOG: {logevent.__dict__}")
+
+        # insert and commit the logevent to the DB
+        cursor.execute('INSERT INTO logs (level, message, created_at, author_id, author_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (logevent.level, logevent.message, logevent.created_at, logevent.author_id, logevent.author_name,))
+
+        # commit changes
+        con.commit()
+        # close the connection
+        close_db(con, cursor)
+
+        print(f"🟢 OK(200): Log created for {logevent.message}, initiatior:{logevent.author_name}")
+
+        return
+
+    # ValueError can be raised by validation or DB checks
+    except ValueError as e:
+        response.status = 400
+        close_db(con, cursor)
+        print(f"🔴 ERROR(400): {str(e)}")
+        return {"message": f"Invalid request body: {str(e)}"}
+
+    # unhandled
+    except Exception as e:
+        response.status = 500
+        close_db(con, cursor)
+        print(f"🔴 ERROR(500): {str(e)}")
+        return {"message": f"Unhandled exception when creating logevent: {str(e)}"}
 
 
 # READ (get) all logs
 @route('/logs', method="GET")
 def get_all_logs():
-    # fetch all logs from database
-    pass
+    print("🔵 ENDPOINT:/logs GET")
+
+    con = None
+    cursor = None
+
+    try:
+        con, cursor = connect_db()
+
+        # fetch all logs
+        cursor.execute('SELECT * FROM logs')
+        rows = cursor.fetchall()
+
+        # create a dictionary list of logs
+        logevents = []
+        for row in rows:
+            logevent = {
+                "id": row[0],
+                "level": row[1],
+                "message": row[2],
+                "created_at": row[3],
+                "author_id": row[4],
+                "author_name": row[5]
+            }
+            logevents.append(logevent)
+
+        response.content_type = 'application/json'
+        response.status = 200
+        response.body = logevents
+
+        # close the connection
+        close_db(con, cursor)
+
+        print("🟢 OK(200): LogEvents fetched successfully")
+        return {"data": logevents}
+    except Exception as e:
+        response.status = 500
+        close_db(con, cursor)
+        print(f"🔴 ERROR(500): {str(e)}")
+        return {"message": f"Unhandled exception when fetching logevents: {str(e)}"}
 
 
-# READ (get) log by id
-@route('/logs/<id>', method="GET")
+# Please read the comments above the route `@route('/users/<user_id:int>', method='POST')` in routes\users.py for an explanation on why this is a POST request and not a GET request.
+# READ (POST, should be GET, read above) log by id
+@route('/logs/:id', method="POST")
 def get_log(id):
-    pass
+    print("🔵 ENDPOINT:/logs/<id> POST(Should be GET; read code comments)")
 
+    con = None
+    cursor = None
 
-# UPDATE (patch in HTTP methods) log by id
-@route('/logs/<id>', method='PATCH')
-def update_log(id):
-    pass
+    try:
+        con, cursor = connect_db()
 
+        # select logs with the id
+        cursor.execute('SELECT * FROM logs WHERE id =?', (id,))
+        row = cursor.fetchone()
 
-# DELETE log by id
-@route('logs/<id>', method='DELETE')
-def delete_log(id):
-    pass
+        if row is None:
+            raise ValueError()
+
+        logevent = {
+            "id": row[0],
+            "level": row[1],
+            "message": row[2],
+            "created_at": row[3],
+            "author_id": row[4],
+            "author_name": row[5]
+        }
+
+        response.content_type = 'application/json'
+        response.status = 200
+        # close the connection
+        close_db(con, cursor)
+        return {"data": logevent}
+    except ValueError:
+        response.status = 404
+        close_db(con, cursor)
+        print("🔴 ERROR(404): LogEvent not found")
+        return {"message": "LogEvent not found"}
+    except Exception as e:
+        response.status = 500
+        close_db(con, cursor)
+        print(f"🔴 ERROR(500): {str(e)}")
+        return {"message": f"Unhandled exception when fetching logevent: {str(e)}"}
