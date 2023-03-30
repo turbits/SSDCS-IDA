@@ -1,7 +1,3 @@
-import uuid
-import time
-
-
 class LogEvent():
     def __init__(self, level: str, message: str, created_at: int, author_id: int, author_name: str):
         self.level = level

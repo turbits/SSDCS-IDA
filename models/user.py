@@ -1,6 +1,3 @@
-import datetime
-
-
 class User:
     def __init__(self, username: str, first_name: str, last_name: str, password: str, last_logon: int, created_at: int, is_admin: bool = False, is_disabled: bool = False):
         self.username = username
