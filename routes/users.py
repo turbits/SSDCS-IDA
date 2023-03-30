@@ -183,7 +183,7 @@ def get_user(id):
             raise ValueError()
 
         user = {
-            "id": row[0], "rowname": row[1], "first_name": row[2], "last_name": row[3], "password": row[4], "last_logon": row[5], "created_at": row[6], "is_admin": bool(row[7]), "is_disabled": bool(row[8])
+            "id": row[0], "username": row[1], "first_name": row[2], "last_name": row[3], "password": row[4], "last_logon": row[5], "created_at": row[6], "is_admin": bool(row[7]), "is_disabled": bool(row[8])
         }
         response.content_type = 'application/json'
         response.status = 200
