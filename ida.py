@@ -1,6 +1,6 @@
 import os
 import sys
-from bottle import Bottle, run, debug, static_file, abort, error, route
+from bottle import run, debug, static_file, abort, error, route
 
 # sys.path.insert(0, os.path.dirname("routes/"))
 
@@ -22,7 +22,7 @@ def send_static(filename):
 # making this file and the routes files easier to read and understand
 # noqa is used here to ignore the flake8 errors from a linting perspective
 # if this were a real product, you should not do this
-from routes import default, logs, records, users  # noqa: E402, F401
+from routes import users, default, logs, records  # noqa: E402, F401
 
 
 @error(404)
@@ -31,4 +31,5 @@ def error404(e):
 
 
 # run the app on localhost:8080; reloader will restart the server when a file is changed
+debug(False)
 run(host='localhost', port=8080, reloader=True)
