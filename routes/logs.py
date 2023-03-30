@@ -3,7 +3,7 @@ import sqlite3
 from bottle import route, request, response, get, template
 import re
 from models.log_event import LogEvent
-from utility.validate_data import validate_data, validate_username, validate_password
+from utility.validate_data import validate_data
 from utility.db import connect_db, close_db
 import time
 
