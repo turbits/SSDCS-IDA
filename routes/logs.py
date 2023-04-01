@@ -6,6 +6,7 @@ from models.log_event import LogEvent
 from utility.validate_data import validate_data
 from utility.db import connect_db, close_db
 import time
+from ida import ida_app
 
 # Because LogEvents are meant to be immutable, i.e. they are read only by anyone except the system, we will not implement create, update, or delete routes or endpoints for LogEvents.
 # Instead the system will call internal functions to create LogEvents, and the only endpoints that will be exposed are GET endpoints to fetch all LogEvents or a single LogEvent by id.
@@ -76,7 +77,7 @@ def create_log(level, message, author_id, author_name):
 
 
 # READ (get) all logs
-@route('/logs', method="GET")
+@ida_app.route('/logs', method="GET")
 def get_all_logs():
     print("🔵 ENDPOINT:/logs GET")
 
@@ -126,7 +127,7 @@ def get_all_logs():
 
 # Please read the comments above the route `@route('/users/<user_id:int>', method='POST')` in routes\users.py for an explanation on why this is a POST request and not a GET request.
 # READ (POST, should be GET, read above) log by id
-@route('/logs/:id', method="POST")
+@ida_app.route('/logs/:id', method="POST")
 def get_log(id):
     print("🔵 ENDPOINT:/logs/<id> POST(Should be GET; read code comments)")
 

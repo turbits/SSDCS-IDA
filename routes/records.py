@@ -7,10 +7,11 @@ from models.record import Record
 from utility.validate_data import validate_data
 from utility.db import connect_db, close_db
 import time
+from ida import ida_app
 
 
 # CREATE record
-@route('/records', method="POST")
+@ida_app.route('/records', method="POST")
 def create_record():
     print("🔵 ENDPOINT:/records POST")
 
@@ -83,7 +84,7 @@ def create_record():
 
 
 # READ (get) all records
-@route('/records', method="GET")
+@ida_app.route('/records', method="GET")
 def get_all_records():
     print("🔵 ENDPOINT:/records GET")
 
@@ -131,7 +132,7 @@ def get_all_records():
 
 # Please read the comments above the route `@route('/users/<id:int>', method='POST')` in routes\users.py for an explanation on why this is a POST request and not a GET request.
 # READ (POST) record by id
-@route('/records/<id:int>', method="POST")
+@ida_app.route('/records/<id:int>', method="POST")
 def get_record(id):
     print("🔵 ENDPOINT:/records/<id> POST(Should be GET; read code comments)")
 
@@ -183,7 +184,7 @@ def get_record(id):
 
 
 # UPDATE (PUT) record by id
-@route('/records/<id:int>', method='PUT')
+@ida_app.route('/records/<id:int>', method='PUT')
 def update_record(id):
     print("🔵 ENDPOINT:/records/<id> PUT")
 
@@ -270,7 +271,7 @@ def update_record(id):
 
 
 # DELETE record by id
-@route('/records/<id:int>', method='DELETE')
+@ida_app.route('/records/<id:int>', method='DELETE')
 def delete_record(id):
     print("🔵 ENDPOINT:/records/<id> DELETE")
 

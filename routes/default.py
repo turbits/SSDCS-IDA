@@ -1,25 +1,26 @@
 from bottle import template, route, request, response
 from utility.validate_data import validate_username, validate_password
+from ida import ida_app
 
 
 # GETs
-@route('/', method='GET')
+@ida_app.route('/', method='GET')
 def render_index():
     return template('templates/index.tpl')
 
 
-@route('/login', method='GET')
+@ida_app.route('/login', method='GET')
 def render_login():
     return template('templates/login/index.tpl')
 
 
-@route('/dashboard', method='GET')
+@ida_app.route('/dashboard', method='GET')
 def render_dashboard():
     return template('templates/dashboard/index.tpl')
 
 
 # POSTs
-@route('/login', method='POST')
+@ida_app.route('/login', method='POST')
 def login():
     # get the username and password from the form
     username = request.forms.get('username')

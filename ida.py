@@ -1,6 +1,12 @@
 import os
 import sys
-from bottle import run, debug, static_file, abort, error, route
+from bottle import Bottle, run, debug, static_file, abort, error, route
+
+ida_app = Bottle()
+
+# the key should be well secured on a real app; in .env, etc. this is just for protoype purposes
+IDA_ISS_SHARED_KEY = "JahXa-F9qAgyuLoCYMkGzrfMfg-itIZLpz6-73Furp0="
+
 
 # sys.path.insert(0, os.path.dirname("routes/"))
 
@@ -8,7 +14,7 @@ from bottle import run, debug, static_file, abort, error, route
 # set up static file serving (for things like css static path, js, etc.)
 # if you need to access a static file it should be as simple as putting the file in the /static folder
 # and accessing it as <filename> (e.g. css/style.css in IDAs case
-@route("/<filename:path>")
+@ida_app.route("/<filename:path>")
 def send_static(filename):
     return static_file(filename, root="static/")
 
@@ -22,11 +28,11 @@ def send_static(filename):
 from routes import users, default, logs, records  # noqa: E402, F401
 
 
-@error(404)
+@ida_app.error(404)
 def error404(e):
     abort("404")
 
 
-# run the app on localhost:8080; reloader will restart the server when a file is changed
-debug(False)
-run(host='localhost', port=8080, reloader=True)
+if __name__ == "__main__":
+    # run the IDA app on localhost:8080; reloader will restart the server when a file is changed
+    ida_app.run(host='localhost', port=8080, debug=False, reloader=True)

@@ -6,10 +6,11 @@ from models.user import User
 from utility.validate_data import validate_data, validate_username, validate_password
 from utility.db import connect_db, close_db
 import time
+from ida import ida_app
 
 
 # CREATE (post) user
-@route('/users', method='POST')
+@ida_app.route('/users', method='POST')
 def create_user():
     print("🔵 ENDPOINT:/users POST")
 
@@ -118,7 +119,7 @@ def create_user():
 
 
 # READ (get) all users
-@route('/users', method='GET')
+@ida_app.route('/users', method='GET')
 def get_all_users():
     print("🔵 ENDPOINT:/users GET")
 
@@ -177,7 +178,7 @@ def get_all_users():
 # In a real-world scenario you wouldn't be using Bottle anyway, but you would be using GET here, as GET is the proper HTTP method in this case.
 
 # READ (POST; PLEASE READ THE ABOVE) user by id
-@route('/users/<id:int>', method='POST')
+@ida_app.route('/users/<id:int>', method='POST')
 def get_user(id):
     print("🔵 ENDPOINT:/users/<id> POST(Should be GET; read code comments)")
 
@@ -225,7 +226,7 @@ def get_user(id):
 
 
 # UPDATE (put) user by id
-@route('/users/<id:int>', method='PUT')
+@ida_app.route('/users/<id:int>', method='PUT')
 def update_user(id):
     print("🔵 ENDPOINT:/users/<id> PUT")
 
@@ -320,7 +321,7 @@ def update_user(id):
 
 
 # DELETE (delete) user by id
-@route('/users/<id:int>', method='DELETE')
+@ida_app.route('/users/<id:int>', method='DELETE')
 def delete_user(id):
     print("🔵 ENDPOINT:/users/<id> DELETE")
 
