@@ -28,6 +28,12 @@ if not IDA_ISS_SHARED_KEY:
 fernet = Fernet(IDA_ISS_SHARED_KEY.encode())
 
 
+def start_microservice():
+    print("🟢 OK(200): Microservice started")
+    # run the ISS data microservice on port 8081
+    iss_app.run(host="localhost", port=8081, debug=False, reloader=False)
+
+
 def stop_microservice(signal, frame):
     print("🟢 OK(200): Microservice stopped")
     sys.exit(0)
@@ -68,7 +74,7 @@ def send_data():
             # sleep for 3 seconds
             time.sleep(3)
         except Exception as e:
-            print(f"🔴 ERROR(500): {str(e)}")
+            print(f"🔴 ERROR: {str(e)}")
 
 
 t = threading.Thread(target=send_data)
@@ -79,21 +85,13 @@ t.start()
 signal.signal(signal.SIGINT, stop_microservice)
 
 
-@iss_app.route("/microservice", method="POST")
-def start_microservice():
-    response.status = 200
-    print("🟢 OK(200): Microservice started")
-
-
 def main():
 
     try:
-        # run the ISS data microservice on port 8081
-        iss_app.run(host="localhost", port=8081, debug=False, reloader=False)
+        start_microservice()
     except Exception as e:
-        print(f"🔴 ERROR(500): {str(e)}")
+        print(f"🔴 ERROR: {str(e)}")
 
 
-if __name__ == "__main__":
-    # run the ISS data microservice on port 8081
-    main()
+# run the ISS data microservice on port 8081
+main()
