@@ -1,5 +1,7 @@
 # Team Transparency - IDA
 
+***⚠️ This is a university course prototype project; do not use this in any production environment. ⚠️***
+
 ## 🖥️What is IDA?
 
 IDA, or ISS Data Archive, is a secure repository software that offers secure storage and access to information. Encrypted information is processed, decrypted on-premises, and stored in a secure local database. Authenticated users can access and optionally manipulate the data via a locally hosted web interface.
@@ -14,7 +16,7 @@ This repository is used to store the code for the IDA project. For a full list o
 
 ## 🤔How to set up the project
 
-For MacOS: Python 2.7 might be installed by default, make sure you're running Python 3.11+ (python --version) in terminal
+For MacOS: Python 2.7 might be installed by default, make sure you're running Python 3.11+ (`python --version` in terminal)
 
 For Windows: use Powershell or Git Bash to run commands (not CMD)
 
@@ -39,17 +41,18 @@ For Windows: use Powershell or Git Bash to run commands (not CMD)
 - If you don't have a database file (ida.db in project root), run `python database.py` to create one.
   - **NOTE: If you have one and you run this, it will overwrite it with default values.**
   - Use a SQLite viewer like [SQLiteStudio](https://sqlitestudio.pl/)(Windows) or [DB Browser for SQLite](https://sqlitebrowser.org/)(All platforms) to view the database.
-- Run `python ida.py` to start the app
+- Run `python ida.py` to start the IDA app
 - Access the web interface at `http://localhost:8080/`
-- See the API documentation at `http://localhost:8080/api`
+- Run `python iss.py` to start the ISS app; this serves as a mock ISS. It runs on port 8081 and sends a POST request to `IDA/records` to create a new record every 3 seconds.
+- ~~See the API documentation at `http://localhost:8080/api`~~ do this later if there's time; for now look at `/routes`
 
 ## 🗃️Dependencies
 
 | Software                                                  | Version        |
 | --------------------------------------------------------- | -------------- |
 | Python                                                    | 3.11.2         |
-| Bottle (micro web framework and web server)               | 0.12           |
-| sqlite3 (database)                                        | 3.39.4         |
+| Bottle (micro web framework and web server)               | 0.12.25        |
+| sqlite3 (database)                                        | 3.39.x         |
 | pip (python package installer)                            | 22.3.1, 23.0.1 |
 | virtualenv (lib - virtual Python environment builder)     | 20.19.0        |
 | pipenv (lib - Python dependency management)               | 2023.2.18      |
@@ -78,6 +81,6 @@ For Windows: use Powershell or Git Bash to run commands (not CMD)
 
 - make sure you're running the project in the virtual environment - run `pipenv shell` in the root of the project
 
-## Code References
+## 📝Code References
 
 - Nadalin, A. (2018) Web Security: How to Harden your HTTP cookies. Available at: [https://www.freecodecamp.org/news/web-security-hardening-http-cookies-be8d8d8016e1/](https://www.freecodecamp.org/news/web-security-hardening-http-cookies-be8d8d8016e1/) [Accessed 28 March 2023]
