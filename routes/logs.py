@@ -117,6 +117,7 @@ def get_all_logs():
         return {"data": logevents}
     except Exception as e:
         response.status = 500
+        response.body = str(e)
         if con is not None and cursor is not None:
             close_db(con, cursor)
         # print to server console
@@ -127,7 +128,7 @@ def get_all_logs():
 
 # Please read the comments above the route `@route('/users/<user_id:int>', method='POST')` in routes\users.py for an explanation on why this is a POST request and not a GET request.
 # READ (POST, should be GET, read above) log by id
-@ida_app.route('/logs/:id', method="POST")
+@ida_app.route('/logs/<id>', method="POST")
 def get_log(id):
     print("🔵 ENDPOINT:/logs/<id> POST(Should be GET; read code comments)")
 
