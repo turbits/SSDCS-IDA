@@ -1,16 +1,24 @@
 % include("templates/includes/head.tpl")
-<body>
-  % include("templates/includes/nav.tpl")
-  <div class="content">
-    <h1>IDA System</h1>
-    <ul>
-      <!-- TODO: check for login status & remove login button/show dashboard button if logged in -->
-      <li class="temp-list-item">
-        <a href="/login" class="btn-primary br">User Login</a>
-      </li>
-      <li class="temp-list-item">
-        <a href="/dashboard" class="btn-primary br">Dashboard</a>
-      </li>
-    </ul>
-  </div>
-</body>
+% include("templates/includes/nav.tpl")
+
+<div class="content">
+  <h1>IDA System</h1>
+  % if session_uuid is not None and username is not None:
+    <h2>Welcome to IDA, {{username}}</h2>
+      <form action="/dashboard" method="GET">
+        <button class="btn-primary br" type="submit">Dashboard</button>
+      </form>
+  % else:
+    <h2>Please log in</h2>
+    <form action="/login" method="GET">
+      <button class="btn-primary br" type="submit">Login</button>
+    </form>
+
+  % if error is not None:
+    <p class="error-message">{{error}}</p>
+  % end
+
+  % if success is not None:
+    <p class="success-message">{{success}}</p>
+  % end
+</div>
