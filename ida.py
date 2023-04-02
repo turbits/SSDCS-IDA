@@ -1,5 +1,6 @@
 import os
 import sys
+import signal
 from bottle import Bottle, run, debug, static_file, abort, error, route
 
 ida_app = Bottle()
@@ -33,5 +34,13 @@ def error404(e):
     abort("404")
 
 
+def stop_app(signal, frame):
+    print("🟢 OK: IDA stopped")
+    sys.exit(0)
+
+
+# handle SIGINT (ctrl+c)
+signal.signal(signal.SIGINT, stop_app)
+
 # run the IDA app on localhost:8080; reloader will restart the server when a file is changed
-ida_app.run(host='localhost', port=8080, debug=False, reloader=False)
+ida_app.run(host='localhost', port=8080, debug=False, reloader=True)
