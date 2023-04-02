@@ -33,6 +33,5 @@ def error404(e):
     abort("404")
 
 
-if __name__ == "__main__":
-    # run the IDA app on localhost:8080; reloader will restart the server when a file is changed
-    ida_app.run(host='localhost', port=8080, debug=False, reloader=True)
+# run the IDA app on localhost:8080; reloader will restart the server when a file is changed
+ida_app.run(host='localhost', port=8080, debug=False, reloader=False)
