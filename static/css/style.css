@@ -8,6 +8,7 @@
   --color-accent-yellow: #F2D9B9;
   --font-display: 'Tilt Warp', sans-serif;
   --font-sans: 'Inter', sans-serif;
+  --br: 5px;
 }
 
 /* ====================== BASE */
@@ -19,6 +20,7 @@ html, body {
 }
 
 div.content {
+  font-family: var(--font-sans);
   padding: 20px;
 }
 
@@ -37,7 +39,7 @@ ul {
 }
 
 .br {
-  border-radius: 5px;
+  border-radius: var(--br);
 }
 
 a {
@@ -62,12 +64,25 @@ nav {
   margin: 0 20px;
 }
 
+.nav-item.nav-item-container {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .nav-title {
   color: var(--color-light);
 }
 
 .nav-title:hover {
   color: var(--color-accent-yellow);
+}
+
+.nav-profile {
+  color: var(--color-dark);
+  background-color: var(--color-light);
+  padding: 10px;
 }
 
 /* ====================== BUTTONS */
@@ -84,8 +99,83 @@ nav {
   color: var(--color-dark);
 }
 
+.btn-primary-rev {
+  padding: 10px;
+  background-color: var(--color-accent-yellow);
+  color: var(--color-dark);
+  transition: all .1s;
+}
+
+.btn-primary-rev:hover {
+  background-color: var(--color-light);
+  color: var(--color-dark);
+}
+
+/* ====================== FORMS */
+input {
+  font-family: var(--font-sans);
+  padding: 10px;
+  border: none;
+  background-color: var(--color-light);
+  color: var(--color-dark);
+  transition: all .1s;
+}
+
+input[type="submit"] {
+  background-color: var(--color-dark);
+  color: var(--color-light);
+}
+
+input[type="submit"]:hover {
+  background-color: var(--color-accent-yellow);
+  color: var(--color-dark);
+  cursor: pointer;
+}
+
+.flex-form {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+.flex-form input {
+  margin: 10px 0;
+}
+
+button[type="submit"] {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+}
+
 /* ====================== MISC/TEMP */
 
 li.temp-list-item {
   margin: 40px 20px;
+}
+
+.error-message {
+  padding: 20px;
+  background-color: var(--color-accent-orange);
+  color: var(--color-dark);
+  font-weight: 700;
+}
+
+.success-message {
+  padding: 20px;
+  background-color: var(--color-accent-teal);
+  color: var(--color-dark);
+  font-weight: 700;
+}
+
+.info-message {
+  padding: 20px;
+  background-color: var(--color-accent-yellow);
+  color: var(--color-dark);
+  font-weight: 700;
+}
+
+.nocursor {
+  user-select: none;
 }
