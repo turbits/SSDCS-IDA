@@ -1,13 +1,19 @@
 import uuid
 import sqlite3
 import json
+from cryptography.fernet import Fernet
 from bottle import route, request, response, template
 import re
 from models.record import Record
 from utility.validate_data import validate_data
 from utility.db import connect_db, close_db
 import time
-from ida import ida_app
+from ida import ida_app, IDA_ISS_SHARED_KEY
+
+if not IDA_ISS_SHARED_KEY:
+    raise ValueError("🔴 ERROR: IDA_ISS_SHARED_KEY is not set")
+
+fernet = Fernet(IDA_ISS_SHARED_KEY.encode())
 
 
 # CREATE record
@@ -21,15 +27,23 @@ def create_record():
     try:
         con, cursor = connect_db()
 
+        # decrypt the data
+        encrypted_data = request.body.read()
+        decrypted_data = fernet.decrypt(encrypted_data)
+        decrypted_string = decrypted_data.decode('utf-8')
+        data = json.loads(decrypted_string)
+
         # combine record data into a dict
         # revised_at is initialized to NULL on record creation (None in Python, it is inserted as NULL in SQLite)
         # created_at is initialized to the current unix timestamp; we can use `datetime.datetime.fromtimestamp(<timestamp>)` to convert it to a human readable datetime
         record_data = {
-            "name": request.json['name'],
+            "name": data.get('name'),
             "created_at": int(time.time()),
             "revised_at": None,
-            "file": request.json['file'],
+            "file": data.get('file'),
         }
+
+        print(record_data)
 
         # validate the record data using the Record model and the data above, passed through a generic validation function
         validation_check = validate_data(record_data, Record)
