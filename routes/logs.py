@@ -19,9 +19,16 @@ def create_log(level, message, author_id, author_name):
 
     con = None
     cursor = None
+    is_admin = False
 
     try:
         con, cursor = connect_db()
+        
+        # see if user is admin
+        cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
+        row = cursor.fetchone()
+        if row is not None and row[7] == 1:
+            is_admin = True
 
         # combine log data into a dict
         # created_at is initialized to the current unix timestamp; we can use `datetime.datetime.fromtimestamp(<timestamp>)` to convert it to a human readable datetime
@@ -83,9 +90,16 @@ def get_all_logs():
 
     con = None
     cursor = None
+    is_admin = False
 
     try:
         con, cursor = connect_db()
+
+        # see if user is admin
+        cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
+        row = cursor.fetchone()
+        if row is not None and row[7] == 1:
+            is_admin = True
 
         # fetch all logs
         cursor.execute('SELECT * FROM logs')
@@ -134,9 +148,16 @@ def get_log(id):
 
     con = None
     cursor = None
+    is_admin = False
 
     try:
         con, cursor = connect_db()
+
+        # see if user is admin
+        cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
+        row = cursor.fetchone()
+        if row is not None and row[7] == 1:
+            is_admin = True
 
         # select logs with the id
         cursor.execute('SELECT * FROM logs WHERE id =?', (id,))

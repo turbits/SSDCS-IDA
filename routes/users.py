@@ -16,9 +16,16 @@ def create_user():
 
     con = None
     cursor = None
+    is_admin = False
 
     try:
         con, cursor = connect_db()
+
+        # see if user is admin
+        cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
+        row = cursor.fetchone()
+        if row is not None and row[7] == 1:
+            is_admin = True
 
         # combine user data into a dict
         # last_logon is initialized to NULL on user creation (None in Python, it is inserted as NULL in SQLite)
@@ -125,9 +132,16 @@ def get_all_users():
 
     con = None
     cursor = None
+    is_admin = False
 
     try:
         con, cursor = connect_db()
+
+        # see if user is admin
+        cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
+        row = cursor.fetchone()
+        if row is not None and row[7] == 1:
+            is_admin = True
 
         # fetch all users
         cursor.execute('SELECT * FROM users')
@@ -184,9 +198,16 @@ def get_user(id):
 
     con = None
     cursor = None
+    is_admin = False
 
     try:
         con, cursor = connect_db()
+
+        # see if user is admin
+        cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
+        row = cursor.fetchone()
+        if row is not None and row[7] == 1:
+            is_admin = True
 
         # select users with the id
         cursor.execute('SELECT * FROM users WHERE id =?', (id,))
@@ -232,6 +253,7 @@ def update_user(id):
 
     con = None
     cursor = None
+    is_admin = False
 
     try:
         username = request.forms.get('username')
@@ -242,6 +264,12 @@ def update_user(id):
         is_disabled = request.forms.get('is_disabled')
 
         con, cursor = connect_db()
+
+        # see if user is admin
+        cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
+        row = cursor.fetchone()
+        if row is not None and row[7] == 1:
+            is_admin = True
 
         # select users with the id
         cursor.execute('SELECT * FROM users WHERE id =?', (id,))
@@ -327,9 +355,16 @@ def delete_user(id):
 
     con = None
     cursor = None
+    is_admin = False
 
     try:
         con, cursor = connect_db()
+
+        # see if user is admin
+        cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
+        row = cursor.fetchone()
+        if row is not None and row[7] == 1:
+            is_admin = True
 
         # select user with id
         cursor.execute('SELECT * FROM users WHERE id =?', (id,))

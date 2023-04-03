@@ -152,9 +152,16 @@ def get_record(id):
 
     con = None
     cursor = None
+    is_admin = False
 
     try:
         con, cursor = connect_db()
+
+        # see if user is admin
+        cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
+        row = cursor.fetchone()
+        if row is not None and row[7] == 1:
+            is_admin = True
 
         # select record with the id
         cursor.execute('SELECT * FROM records WHERE id =?', (id,))
@@ -204,12 +211,19 @@ def update_record(id):
 
     con = None
     cursor = None
+    is_admin = False
 
     try:
         name = request.forms.get('name')
         file = request.forms.get('file')
 
         con, cursor = connect_db()
+
+        # see if user is admin
+        cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
+        row = cursor.fetchone()
+        if row is not None and row[7] == 1:
+            is_admin = True
 
         # select users with the id
         cursor.execute('SELECT * FROM records WHERE id =?', (id,))
@@ -291,9 +305,16 @@ def delete_record(id):
 
     con = None
     cursor = None
+    is_admin = False
 
     try:
         con, cursor = connect_db()
+
+        # see if user is admin
+        cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
+        row = cursor.fetchone()
+        if row is not None and row[7] == 1:
+            is_admin = True
 
         # select record with id
         cursor.execute('SELECT * FROM records WHERE id =?', (id,))
