@@ -4,6 +4,7 @@ from bottle import template, route, request, response, redirect
 from utility.validate_data import validate_username, validate_password
 from ida import ida_app
 from utility.db import connect_db, close_db
+from urllib import request as urllib_request
 
 
 # GETs
@@ -12,7 +13,7 @@ def render_index():
     if request.get_cookie('session_uuid') is not None:
         redirect('/dashboard')
 
-    return template('templates/index.tpl', error=None, success=None, session_uuid=None, username=None)
+    return template('templates/index.tpl', error=None, success=None, session_uuid=None, username=None, data_in=None)
 
 
 @ida_app.route('/login', method='GET')
@@ -22,7 +23,7 @@ def render_login():
     if session_uuid is not None:
         redirect('/dashboard')
 
-    return template('templates/login/index.tpl', error=None, success=None, session_uuid=None, username=None)
+    return template('templates/login/index.tpl', error=None, success=None, session_uuid=None, username=None, data_in=None)
 
 
 @ida_app.route('/logout', method='GET')
@@ -35,17 +36,20 @@ def render_logout():
     print("🔵 INFO: cleared cookies.")
 
     time.sleep(1)
-    return template('templates/index.tpl', error=None, success="You've been logged out.", session_uuid=None, username=None)
+    return template('templates/index.tpl', error=None, success="You've been logged out.", session_uuid=None, username=None, data_in=None)
 
 
 @ida_app.route('/dashboard', method='GET')
 def render_dashboard():
     # get the session_uuid cookie
     session_uuid = request.get_cookie('session_uuid')
+    is_admin = False
+    # the data that we pass to the dashboard
+    data = None
 
     # check if user cookie exists
     if session_uuid is None:
-        return template('templates/login/index.tpl', error='Please log in to access the dashboard.', success=None, session_uuid=None, username=None)
+        return template('templates/login/index.tpl', error='Please log in to access the dashboard.', success=None, session_uuid=None, username=None, data_in=None)
     else:
         try:
             con, cursor = connect_db()
@@ -54,33 +58,43 @@ def render_dashboard():
             cursor.execute('SELECT * FROM user_ref WHERE uuid = ?', (session_uuid,))
             row = cursor.fetchone()
 
+            # see if user is admin
+            cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
+            row2 = cursor.fetchone()
+            if row2[7] == 1:
+                is_admin = True
+
             if row is None:
                 # if uuid is not valid, delete cookies and redirect to login
                 response.delete_cookie('session_uuid')
                 response.delete_cookie('username')
-                return template('templates/login/index.tpl', error='Please log in to access the dashboard.', success=None, session_uuid=None, username=None)
+                return template('templates/login/index.tpl', error='Please log in to access the dashboard.', success=None, session_uuid=None, username=None, data_in=None)
             else:
                 # if uuid is valid, get data and render dashboard
-                data = cursor.execute('SELECT * FROM records ORDER BY id DESC').fetchall()
-                
-                # TODO: rewrite this ; we are fetching the RECORDS not the USERS in this table. ALSO need to add tabs/pages for logs, users.
-                # TODO: 2) check for admin on each endpoint by doing a lookup. maybe that should be a helper function in db.py
-                print(data)
-                
-                print(data[0][0])
-                print(data[0][1])
-                print(data[0][2])
-                print(data[0][3])
-                print(data[0][4])
-                print(data[0][5])
-                print(data[0][6])
-                print(data[0][7])
-                print(data[0][8])
+                # data = cursor.execute('SELECT * FROM records ORDER BY id DESC').fetchall()
 
-                return template('templates/dashboard/index.tpl', error=None, success=None, session_uuid=request.get_cookie('session_uuid'), username=request.get_cookie('username'), data_array=data)
+                # the url to our records endpoint
+                url = 'http://localhost:8080/records'
+
+                # get response from endpoint
+                with urllib_request.urlopen(url) as _response:
+                    # if response is OK (200), continue
+                    if _response.getcode() == 200:
+                        # decode the response and load it into a json object
+                        _res_str = _response.read().decode('utf-8')
+                        # this json object is a list of records in the database, we pass this to the template below
+                        data = json.loads(_res_str)
+                    else:
+                        # if response is not OK, return an error
+                        return template('templates/error.tpl', message=f"Error: {_response.getcode()}")
+
+                # important: ideally, we would implement efficient storing of data retrieved from the DB, in local storage or some other cache so we didn't have to hit the DB every time we wanted to render the dashboard
+
+                # render the dashboard template and pass in our vars
+                return template('templates/dashboard/index.tpl', error=None, success=None, session_uuid=request.get_cookie('session_uuid'), username=request.get_cookie('username'), data_in=data)
         except Exception as e:
             print(f"🔴 ERROR: {str(e)}")
-            return template('templates/login/index.tpl', error='Internal server error.', success=None, session_uuid=None, username=None)
+            return template('templates/login/index.tpl', error='Internal server error.', success=None, session_uuid=None, username=None, data_in=None)
 
 
 # POSTs
@@ -97,7 +111,7 @@ def login():
     # if either of the checks fail, return an error
     if _username_check is not True or _password_check is not True:
         print("🔴 ERROR: Failed Regex: Invalid username or password.")
-        return template('templates/login/index.tpl', error='Invalid username or password.', success=None, session_uuid=None, username=None)
+        return template('templates/login/index.tpl', error='Invalid username or password.', success=None, session_uuid=None, username=None, data_in=None)
 
     try:
         con, cursor = connect_db()
@@ -111,7 +125,7 @@ def login():
         # if user exists, check if the password matches
         if user_pw != password or user_id is None:
             print("🔴 ERROR: Failed Login: Invalid username or password.")
-            return template('templates/login/index.tpl', error='Invalid username or password.', success=None, session_uuid=None, username=None)
+            return template('templates/login/index.tpl', error='Invalid username or password.', success=None, session_uuid=None, username=None, data_in=None)
 
         # if the password matches, fetch user's UUID via user_ref table
         cursor.execute('SELECT * FROM user_ref WHERE user_id = ?', (user_id,))
@@ -121,7 +135,7 @@ def login():
         # if the UUID is not found, return an error
         if session_uuid is None:
             print("🔴 ERROR: Failed Login: Internal server error. (UUID not found)")
-            return template('templates/login/index.tpl', error='Internal server error.', success=None, session_uuid=None, username=None)
+            return template('templates/login/index.tpl', error='Internal server error.', success=None, session_uuid=None, username=None, data_in=None)
 
         # if we were to harden this, we could add the 'domain' parameter, among others: https://www.freecodecamp.org/news/web-security-hardening-http-cookies-be8d8d8016e1/ (Nadalin, 2018)
 
@@ -137,11 +151,11 @@ def login():
         # close the connection
         close_db(con, cursor)
 
-        return template('templates/dashboard/index.tpl', success='Successfully logged in.', error=None, session_uuid=cookie_uuid, username=cookie_username)
-        # redirect('/dashboard')
+        # return template('templates/dashboard/index.tpl', success='Successfully logged in.', error=None, session_uuid=cookie_uuid, username=cookie_username, data_in=None)
+        redirect('/dashboard')
 
     except Exception as e:
         print(f"🔴 ERROR: {str(e)}")
-        return template('templates/login/index.tpl', error='Internal server error.', success=None, session_uuid=None, username=None)
+        return template('templates/login/index.tpl', error='Internal server error.', success=None, session_uuid=None, username=None, data_in=None)
 
 # Nadalin, A. (2018) Web Security: How to Harden your HTTP cookies. Available at: [https://www.freecodecamp.org/news/web-security-hardening-http-cookies-be8d8d8016e1/](https://www.freecodecamp.org/news/web-security-hardening-http-cookies-be8d8d8016e1/) [Accessed 28 March 2023]
