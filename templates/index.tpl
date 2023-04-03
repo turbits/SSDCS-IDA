@@ -13,6 +13,7 @@
     <form action="/login" method="GET">
       <button class="btn-primary br" type="submit">Login</button>
     </form>
+  % end
 
   % if error is not None:
     <p class="error-message">{{error}}</p>
