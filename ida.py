@@ -36,7 +36,9 @@ def error404(e):
 
 def stop_app(signal, frame):
     print("🟢 OK: IDA stopped")
-    sys.exit(0)
+    sys.exit()
+    os.exit(0)
+    return
 
 
 # handle SIGINT (ctrl+c)
