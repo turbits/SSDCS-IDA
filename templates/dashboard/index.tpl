@@ -8,32 +8,25 @@
 
 
     % if session_uuid is not None and username is not None:
-        % if data_array is not None:
+        % if data_in is not None:
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Id</th>
-                        <th>Username</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Last Logon</th>
-                        <th>Created</th>
-                        <th>Admin</th>
-                        <th>Disabled</th>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Created At</th>
+                        <th>Revised At</th>
+                        <th>File</th>
                     </tr>
                 </thead>
                 <tbody>
-                    % for row in data_array:
+                    % for row in data_in:
                         <tr>
                             <td>{{row[0]}}</td>
                             <td>{{row[1]}}</td>
                             <td>{{row[2]}}</td>
                             <td>{{row[3]}}</td>
-                            <!-- 4 is password, we skip -->
-                            <td>{{row[5]}}</td>
-                            <td>{{row[6]}}</td>
-                            <td>{{row[7]}}</td>
-                            <td>{{row[8]}}</td>
+                            <td>{{row[4]}}</td>
                             <td>
                                 <a href="#">Edit</a>
                                 <a href="#">Delete</a>
@@ -44,7 +37,7 @@
             </table>
         % else:
             <p class="info-message">No data found.</p>
-        %end
+        % end
     % else:
         % template('templates/login/index.tpl', success=None, error='You are not logged in.')
     % end
