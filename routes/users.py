@@ -12,7 +12,7 @@ from ida import ida_app
 # CREATE (post) user
 @ida_app.route('/users', method='POST')
 def create_user():
-    print("🔵 ENDPOINT:/users POST")
+    print("🎯[POST]/users")
 
     con = None
     cursor = None
@@ -89,6 +89,8 @@ def create_user():
             "is_admin": bool(row[7]),
             "is_disabled": bool(row[8])
         }
+        
+        newuser_json = json.dumps(newuser)
 
         # insert and commit the new user_ref to the DB
         cursor.execute('INSERT INTO user_ref (uuid, id) VALUES (?, ?)', (_uuid, newuser['id'],))
@@ -97,38 +99,37 @@ def create_user():
         con.commit()
 
         # print to server console
-        print(f"🟢 OK(200): User created successfully: {newuser['username']}")
+        print(f"🟢[POST]/users:create_user(): {newuser['username']}")
 
         # close the connection
         close_db(con, cursor)
-        # return the new user
-        return {"data": newuser}
+        
+        # return response
+        return response(newuser_json, status=201, headers={'Content-Type': 'application/json'})
 
     # ValueError can be raised by validation or DB checks
     except ValueError as e:
-        response.status = 400
         if con is not None and cursor is not None:
             close_db(con, cursor)
         # print to server console
-        print(f"🔴 ERROR(400): {str(e)}")
+        print(f"🔴[POST]/users:{str(e)}")
         # return message
-        return {"message": f"Invalid request body: {str(e)}"}
+        return response(str(e), status=400, headers={'Content-Type': 'text/plain'})
 
     # unhandled
     except Exception as e:
-        response.status = 500
         if con is not None and cursor is not None:
             close_db(con, cursor)
         # print to server console
-        print(f"🔴 ERROR(500): {str(e)}")
+        print(f"🔴[POST]/users:{str(e)}")
         # return message
-        return {"message": f"Unhandled exception when creating user: {str(e)}"}
+        return response(str(e), status=500, headers={'Content-Type': 'text/plain'})
 
 
 # READ (get) all users
 @ida_app.route('/users', method='GET')
 def get_all_users():
-    print("🔵 ENDPOINT:/users GET")
+    print("🎯[GET]/users")
 
     con = None
     cursor = None
@@ -163,16 +164,15 @@ def get_all_users():
             }
             users.append(user)
 
-        response.content_type = 'application/json'
-        response.status = 200
-        response.body = users
+        users_json = json.dumps(users)
 
         # print to server console
         print("🟢 OK(200): Users fetched successfully")
 
         # close the connection
         close_db(con, cursor)
-        return {"data": users}
+        # return response
+        return response(users_json, status=200, headers={'Content-Type': 'application/json'})
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
@@ -194,7 +194,7 @@ def get_all_users():
 # READ (POST; PLEASE READ THE ABOVE) user by id
 @ida_app.route('/users/<id:int>', method='POST')
 def get_user(id):
-    print("🔵 ENDPOINT:/users/<id> POST(Should be GET; read code comments)")
+    print("🎯[POST]/users/<id:int>")
 
     con = None
     cursor = None
@@ -249,7 +249,7 @@ def get_user(id):
 # UPDATE (put) user by id
 @ida_app.route('/users/<id:int>', method='PUT')
 def update_user(id):
-    print("🔵 ENDPOINT:/users/<id> PUT")
+    print("🎯[PUT]/users/<id:int>")
 
     con = None
     cursor = None
@@ -351,7 +351,7 @@ def update_user(id):
 # DELETE (delete) user by id
 @ida_app.route('/users/<id:int>', method='DELETE')
 def delete_user(id):
-    print("🔵 ENDPOINT:/users/<id> DELETE")
+    print("🎯[DELETE]/users/<id:int>")
 
     con = None
     cursor = None

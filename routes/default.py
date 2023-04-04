@@ -4,7 +4,8 @@ from bottle import template, route, request, response, redirect
 from utility.validate_data import validate_username, validate_password
 from ida import ida_app
 from utility.db import connect_db, close_db
-from urllib import request as urllib_request
+import urllib.request
+import http.client
 
 
 # GETs
@@ -172,28 +173,37 @@ def render_dashboard():
                 response.delete_cookie('username', path='/')
                 return template('templates/login/index.tpl', error='Please log in to access the dashboard.', success=None, session_uuid=None, username=None)
             else:
+                print("row is not none")
                 # if uuid is valid, get data and render dashboard
                 # data = cursor.execute('SELECT * FROM records ORDER BY id DESC').fetchall()
 
+                # get data from db
                 # the url to our records endpoint
-                url = 'http://localhost:8080/records'
-
+                url = "http://localhost:8080/records"
+                req = urllib.request.Request(url)
                 # get response from endpoint
-                with urllib_request.urlopen(url) as _response:
+                try:
+                    # res = urllib.request.urlopen(req, timeout=5)
+                    res = request.get(url, timeout=5)
                     # if response is OK (200), continue
-                    if _response.getcode() == 200:
+                    if res.status_code == 200:
+                        print("urllib.request response 200")
                         # decode the response and load it into a json object
-                        _res_str = _response.read().decode('utf-8')
+                        records_json = json.loads(res.read().decode('utf-8'))
+                        print(f"🐞[DEBUG]:records_json():\n{records_json}")
                         # this json object is a list of records in the database, we pass this to the template below
-                        data = json.loads(_res_str)
+                        return template('templates/dashboard/index.tpl', error=None, success=None, session_uuid=request.get_cookie('session_uuid'), username=request.get_cookie('username'), data=records_json)
                     else:
-                        print(f"🔴 ERROR: Failed to get records from DB. Response code: {_response.getcode()}")
+                        print(f"🔴[GET]/dashboard:code:{res.status_code}")
                         # if response is not OK, return an error
-                        return template('templates/error.tpl', message=f"Error: {_response.getcode()}")
-
+                        return template('templates/dashboard/index.tpl', error=f"Code:{res.status_code}\nReason:{res.status_line}", success=None, session_uuid=request.get_cookie('session_uuid'), username=request.get_cookie('username'), data=None)
+                except Exception as e:
+                    print(f"🔴[GET]/dashboard:Request to '/records':\n {str(e)}")
                 # important: ideally, we would implement efficient storing of data retrieved from the DB, in local storage or some other cache so we didn't have to hit the DB every time we wanted to render the dashboard
 
                 # render the dashboard template and pass in our vars
+                print("render dashboard")
+                print("data: " + str(data))
                 return template('templates/dashboard/index.tpl', error=None, success=None, session_uuid=request.get_cookie('session_uuid'), username=request.get_cookie('username'), data=data)
         except Exception as e:
             print(f"🔴 ERROR:/dashboard GET\n{str(e)}")

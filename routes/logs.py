@@ -1,11 +1,12 @@
 import uuid
 import sqlite3
-from bottle import route, request, response, get, template
 import re
+import time
+import json
+from bottle import route, request, response, get, template
 from models.log_event import LogEvent
 from utility.validate_data import validate_data
 from utility.db import connect_db, close_db
-import time
 from ida import ida_app
 
 # Because LogEvents are meant to be immutable, i.e. they are read only by anyone except the system, we will not implement create, update, or delete routes or endpoints for LogEvents.
@@ -15,7 +16,7 @@ from ida import ida_app
 # CREATE log function
 # NOT an endpoint, but a function that can be called by other endpoints to create a log (see above for explanation)
 def create_log(level, message, author_id, author_name):
-    print("🔵 LOGEVENT:CREATE")
+    print("🎯[FUNCTION] create_log()")
 
     con = None
     cursor = None
@@ -86,7 +87,7 @@ def create_log(level, message, author_id, author_name):
 # READ (get) all logs
 @ida_app.route('/logs', method="GET")
 def get_all_logs():
-    print("🔵 ENDPOINT:/logs GET")
+    print("🎯[GET]/logs")
 
     con = None
     cursor = None
@@ -118,9 +119,7 @@ def get_all_logs():
             }
             logevents.append(logevent)
 
-        response.content_type = 'application/json'
-        response.status = 200
-        response.body = logevents
+        logs_json = json.dumps(logevents)
 
         # print to server console
         print("🟢 OK(200): LogEvents fetched successfully")
@@ -128,7 +127,7 @@ def get_all_logs():
         # close the connection
         close_db(con, cursor)
         # return message
-        return {"data": logevents}
+        return response(logs_json, status=200, content_type="application/json")
     except Exception as e:
         response.status = 500
         response.body = str(e)
@@ -142,9 +141,9 @@ def get_all_logs():
 
 # Please read the comments above the route `@route('/users/<user_id:int>', method='POST')` in routes\users.py for an explanation on why this is a POST request and not a GET request.
 # READ (POST, should be GET, read above) log by id
-@ida_app.route('/logs/<id>', method="POST")
+@ida_app.route('/logs/<id:int>', method="POST")
 def get_log(id):
-    print("🔵 ENDPOINT:/logs/<id> POST(Should be GET; read code comments)")
+    print("🎯[POST]/logs/<id:int>")
 
     con = None
     cursor = None
@@ -175,14 +174,14 @@ def get_log(id):
             "author_name": row[5]
         }
 
-        response.content_type = 'application/json'
-        response.status = 200
+        logevent_json = json.dumps(logevent)
 
         # print to server console
         print("🟢 OK(200): LogEvent fetched successfully")
         # close the connection
         close_db(con, cursor)
-        return {"data": logevent}
+        # return response
+        return response(logevent_json, status=200, content_type="application/json")
     except ValueError:
         response.status = 404
         if con is not None and cursor is not None:

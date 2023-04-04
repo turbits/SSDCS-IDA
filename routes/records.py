@@ -19,7 +19,7 @@ fernet = Fernet(IDA_ISS_SHARED_KEY.encode())
 # CREATE record
 @ida_app.route('/records', method="POST")
 def create_record():
-    print("🔵 ENDPOINT:/records POST")
+    print("🎯[POST]/records")
 
     con = None
     cursor = None
@@ -100,7 +100,7 @@ def create_record():
 # READ (get) all records
 @ida_app.route('/records', method="GET")
 def get_all_records():
-    print("🔵 ENDPOINT:/records GET")
+    print("🎯[GET]/records")
 
     con = None
     cursor = None
@@ -124,22 +124,24 @@ def get_all_records():
             }
             records.append(record)
 
-        response.content_type = 'application/json'
-        response.status = 200
-        response.body = records
+        records_json = json.dumps(records)
+
+        # response.content_type = 'application/json'
+        # response.status = 200
+        # response.body = records_json
 
         # print to server console
-        print("🟢 OK(200): Records fetched successfully")
+        print("🟢[GET]/records: Records fetched successfully")
 
         # close the connection
         close_db(con, cursor)
-        return {"data": records}
+        # return response
+        return response(records_json, content_type='application/json', status=200)
     except Exception as e:
-        response.status = 500
         if con is not None and cursor is not None:
             close_db(con, cursor)
         # print to server console
-        print(f"🔴 ERROR(500): {str(e)}")
+        print(f"🔴[GET]/records: {str(e)}")
         # return message
         return {"message": f"Unhandled exception when fetching records: {str(e)}"}
 
@@ -148,7 +150,7 @@ def get_all_records():
 # READ (POST) record by id
 @ida_app.route('/records/<id:int>', method="POST")
 def get_record(id):
-    print("🔵 ENDPOINT:/records/<id> POST(Should be GET; read code comments)")
+    print("🎯[POST]/records/<id:int>")
 
     con = None
     cursor = None
@@ -207,7 +209,7 @@ def get_record(id):
 # UPDATE (PUT) record by id
 @ida_app.route('/records/<id:int>', method='PUT')
 def update_record(id):
-    print("🔵 ENDPOINT:/records/<id> PUT")
+    print("🎯[PUT]/records/<id:int>")
 
     con = None
     cursor = None
@@ -301,7 +303,7 @@ def update_record(id):
 # DELETE record by id
 @ida_app.route('/records/<id:int>', method='DELETE')
 def delete_record(id):
-    print("🔵 ENDPOINT:/records/<id> DELETE")
+    print("🎯[DELETE]/records/<id:int>")
 
     con = None
     cursor = None
