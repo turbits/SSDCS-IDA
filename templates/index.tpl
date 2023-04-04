@@ -4,15 +4,11 @@
 <div class="content">
   <h1>IDA System</h1>
   % if session_uuid is not None and username is not None:
-    <h2>Welcome to IDA, {{username}}</h2>
-      <form action="/dashboard" method="GET">
-        <button class="btn-primary br" type="submit">Dashboard</button>
-      </form>
+    <h2>Welcome, {{username}}</h2>
+      <a href="/dashboard" class="btn-primary br">Dashboard</a>
   % else:
     <h2>Please log in</h2>
-    <form action="/login" method="GET">
-      <button class="btn-primary br" type="submit">Login</button>
-    </form>
+    <a href="/login" class="btn-primary br">Login</a>
   % end
 
   % if error is not None:
