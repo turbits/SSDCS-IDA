@@ -4,8 +4,6 @@ from bottle import template, route, request, response, redirect
 from utility.validate_data import validate_username, validate_password
 from ida import ida_app
 from utility.db import connect_db, close_db
-import urllib.request
-import http.client
 
 
 # GETs
@@ -180,14 +178,12 @@ def render_dashboard():
                 # get data from db
                 # the url to our records endpoint
                 url = "http://localhost:8080/records"
-                req = urllib.request.Request(url)
                 # get response from endpoint
                 try:
-                    # res = urllib.request.urlopen(req, timeout=5)
                     res = request.get(url, timeout=5)
                     # if response is OK (200), continue
                     if res.status_code == 200:
-                        print("urllib.request response 200")
+                        print("request response 200")
                         # decode the response and load it into a json object
                         records_json = json.loads(res.read().decode('utf-8'))
                         print(f"🐞[DEBUG]:records_json():\n{records_json}")
