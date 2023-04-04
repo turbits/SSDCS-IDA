@@ -7,7 +7,7 @@
     <h1>IDA System Login</h1>
 
     % if session_uuid is not None and username is not None:
-        % template('templates/dashboard/index.tpl', error=None, success=None, session_uuid=session_uuid, username=username)
+        % redirect('/')
     % else:
         <div class="content">
             <form class="flex-form" action="/login" method="POST">

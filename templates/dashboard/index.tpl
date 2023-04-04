@@ -8,7 +8,7 @@
 
 
     % if session_uuid is not None and username is not None:
-        % if data_in is not None:
+        % if data is not None:
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -20,7 +20,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    % for row in data_in:
+                    % for row in data:
                         <tr>
                             <td>{{row[0]}}</td>
                             <td>{{row[1]}}</td>
