@@ -24,7 +24,7 @@ def create_log(level, message, author_id, author_name):
 
     try:
         con, cursor = connect_db()
-        
+
         # see if user is admin
         cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
         row = cursor.fetchone()

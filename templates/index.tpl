@@ -12,10 +12,10 @@
   % end
 
   % if error is not None:
-    <p class="error-message">{{error}}</p>
+    <p class="error-message br">{{error}}</p>
   % end
 
   % if success is not None:
-    <p class="success-message">{{success}}</p>
+    <p class="success-message br">{{success}}</p>
   % end
 </div>

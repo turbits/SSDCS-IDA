@@ -6,6 +6,8 @@
 <div class="content">
     <h1>IDA System Dashboard</h1>
 
+    <a href="/dashboard" class="btn-primary br">Refresh</a>
+
 
     % if session_uuid is not None and username is not None:
         % if data is not None:
@@ -36,17 +38,17 @@
                 </tbody>
             </table>
         % else:
-            <p class="info-message">No data found.</p>
+            <p class="info-message br">No data found.</p>
         % end
     % else:
         % template('templates/login/index.tpl', success=None, error='You are not logged in.')
     % end
 
     % if error is not None:
-        <p class="error-message">{{error}}</p>
+        <p class="error-message br">{{error}}</p>
     % end
 
     % if success is not None:
-        <p class="success-message">{{success}}</p>
+        <p class="success-message br">{{success}}</p>
     % end
 </div>

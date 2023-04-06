@@ -46,6 +46,29 @@ For Windows: use Powershell or Git Bash to run commands (not CMD)
 - Run `python iss.py` to start the ISS app; this serves as a mock ISS. It runs on port 8081 and sends a POST request to `IDA/records` to create a new record every 3 seconds.
 - ~~See the API documentation at `http://localhost:8080/api`~~ do this later if there's time; for now look at `/routes`
 
+## 👀 Features
+
+- Sessions; a uuid and a username are stored as cookies. When endpoints require authentication, the uuid is checked against the database to see if it's valid. If it is, the user is authenticated. This is also how users are checked if they are admin.
+- Login/logout
+- Dashboard to view records
+- ISS microservice that generates and sends a "data file" to the IDA /records CREATE endpoint every 3 seconds
+
+## ⚠️ Unimplemented Features
+
+Keep in mind that this is very much a prototype and is not production ready, and could be improved in many ways. Some of these improvements are listed below.
+
+- Production ready webserver or framework; would use something more tried and tested such as Django/PostgreSQL
+- Editing of database items (users, records, etc) via the UI
+- Efficient database queries; currently, the database is queried for every single record, and then the results are filtered in Python. This is inefficient and should be done in the database.
+- More robust error handling
+- More secure session handling and authentication
+- More secure validation
+- Securing configuration variables; Fernet key is in plaintext in the code. This is not secure and should be stored in a secure location, such as a .env file.
+- More secure database; currently, the database is stored in plaintext. This is not secure and should be encrypted.
+- More secure encryption; currently, the encryption is done with a Fernet key. This is not secure and should be replaced with a more secure encryption method.
+- Password hashing; currently passwords are stored in plaintext, they should be hashed/salted, encypted when being communicated, etc.
+- Many, many more
+
 ## 🗃️Dependencies
 
 | Software                                                  | Version        |
@@ -57,6 +80,7 @@ For Windows: use Powershell or Git Bash to run commands (not CMD)
 | virtualenv (lib - virtual Python environment builder)     | 20.19.0        |
 | pipenv (lib - Python dependency management)               | 2023.2.18      |
 | cryptography (lib - cryptographic recipes and primitives) | 39.0.1         |
+| requests (lib - 'Python HTTP for Humans')                 | 2.28.2         |
 
 ## 📖Reading Material
 

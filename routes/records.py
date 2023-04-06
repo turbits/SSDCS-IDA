@@ -125,7 +125,7 @@ def get_all_records():
             records.append(record)
 
         records_json = json.dumps(records)
-
+        print("records json /records: ", records_json)
         # response.content_type = 'application/json'
         # response.status = 200
         # response.body = records_json
@@ -135,8 +135,13 @@ def get_all_records():
 
         # close the connection
         close_db(con, cursor)
+
         # return response
-        return response(records_json, content_type='application/json', status=200)
+        response.body = records_json
+        response.status = 200
+        response.content_type = 'application/json'
+        # return response(body=records_json, content_type='application/json', status=200)
+        return
     except Exception as e:
         if con is not None and cursor is not None:
             close_db(con, cursor)

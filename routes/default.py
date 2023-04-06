@@ -4,12 +4,15 @@ from bottle import template, route, request, response, redirect
 from utility.validate_data import validate_username, validate_password
 from ida import ida_app
 from utility.db import connect_db, close_db
+from utility.logger import endpoint_hit
+from utility.enums import LogEndpoint, LogMode, LogLevel
+import requests
 
 
 # GETs
 @ida_app.route('/', method='GET')
 def render_index():
-    print("🔵 INFO:RENDER / GET")
+    endpoint_hit(LogEndpoint.INDEX, LogMode.GET)
 
     cookie_uuid = request.get_cookie('session_uuid')
     cookie_username = request.get_cookie('username')
@@ -33,7 +36,7 @@ def render_index():
 
 @ida_app.route('/login', method='GET')
 def render_login():
-    print("🔵 INFO:RENDER /login GET")
+    endpoint_hit(LogEndpoint.LOGIN, LogMode.GET)
 
     session_uuid = request.get_cookie('session_uuid')
     print(f"🔵 INFO: Session UUID: {session_uuid} (from cookie)")
@@ -48,7 +51,7 @@ def render_login():
 
 @ida_app.route('/login', method='POST')
 def login():
-    print("🔵 INFO:RENDER /login POST")
+    endpoint_hit(LogEndpoint.INDEX, LogMode.POST)
 
     user_id = None
     user_username = None
@@ -113,7 +116,8 @@ def login():
 
 @ida_app.route('/logout', method='GET')
 def render_logout():
-    print("🔵 INFO:RENDER /logout GET")
+    endpoint_hit(LogEndpoint.LOGOUT, LogMode.GET)
+
     # delete cookies for site
     response.delete_cookie('session_uuid', path='/')
     response.delete_cookie('username', path='/')
@@ -124,19 +128,10 @@ def render_logout():
     return template('templates/index.tpl', error=None, success="You've been logged out.", session_uuid=None, username=None, data=None)
 
 
-@ida_app.route('/testcookies', method='GET')
-def test_cookies():
-    print("🔵 INFO:RENDER /testcookies GET")
-
-    cookie_uuid = request.get_cookie('session_uuid')
-    cookie_username = request.get_cookie('username')
-
-    print(f"🔵 INFO: Cookies:\nSession UUID: {cookie_uuid}\nUsername: {cookie_username}")
-
-
 @ida_app.route('/dashboard', method='GET')
 def render_dashboard():
-    print("🔵 INFO:RENDER /dashboard GET")
+    endpoint_hit(LogEndpoint.DASHBOARD, LogMode.GET)
+
     # get the session_uuid cookie
     session_uuid = request.get_cookie('session_uuid')
     print(f"🔵 INFO: Session UUID: {session_uuid} (from cookie)")
@@ -171,7 +166,6 @@ def render_dashboard():
                 response.delete_cookie('username', path='/')
                 return template('templates/login/index.tpl', error='Please log in to access the dashboard.', success=None, session_uuid=None, username=None)
             else:
-                print("row is not none")
                 # if uuid is valid, get data and render dashboard
                 # data = cursor.execute('SELECT * FROM records ORDER BY id DESC').fetchall()
 
@@ -180,15 +174,16 @@ def render_dashboard():
                 url = "http://localhost:8080/records"
                 # get response from endpoint
                 try:
-                    res = request.get(url, timeout=5)
+                    res = requests.get(url, timeout=5)
+
+                    print(f"🐞[DEBUG]:res:\n{res.text}")
                     # if response is OK (200), continue
                     if res.status_code == 200:
-                        print("request response 200")
                         # decode the response and load it into a json object
-                        records_json = json.loads(res.read().decode('utf-8'))
-                        print(f"🐞[DEBUG]:records_json():\n{records_json}")
+                        # records_json = json.loads(response.body)
+
                         # this json object is a list of records in the database, we pass this to the template below
-                        return template('templates/dashboard/index.tpl', error=None, success=None, session_uuid=request.get_cookie('session_uuid'), username=request.get_cookie('username'), data=records_json)
+                        return template('templates/dashboard/index.tpl', error=None, success=None, session_uuid=request.get_cookie('session_uuid'), username=request.get_cookie('username'), data=res.body)
                     else:
                         print(f"🔴[GET]/dashboard:code:{res.status_code}")
                         # if response is not OK, return an error

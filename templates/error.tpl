@@ -4,6 +4,6 @@
 <div class="content">
 <h1>An error occurred</h1>
 
-<p class="error-message">{{message}}</p>
+<p class="error-message br">{{message}}</p>
 
 </div>

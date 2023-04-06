@@ -63,12 +63,13 @@ def send_data():
         encrypted_data = fernet.encrypt(file_string.encode())
 
         # craft request
-        headers = {"Content-Type": "application/octet-stream"}
-        req = urllib.request.Request(IDA_URL, headers=headers, data=encrypted_data)
+        # headers = {"Content-Type": "application/octet-stream"}
+        # req = urllib.request.Request(IDA_URL, headers=headers, data=encrypted_data)
 
         try:
             # send request
-            res = urllib.request.urlopen(req)
+            # res = urllib.request.urlopen(req)
+            res = request.post(IDA_URL, data=encrypted_data, content_type="application/octet-stream")
             # print response to server console
             print(f"🟢 OK(200): {res.read().decode()}")
             # sleep for 3 seconds
