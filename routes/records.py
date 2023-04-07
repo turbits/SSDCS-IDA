@@ -1,13 +1,15 @@
 import uuid
 import sqlite3
 import json
+import time
+import re
 from cryptography.fernet import Fernet
 from bottle import route, request, response, template
-import re
 from models.record import Record
 from utility.validate_data import validate_data
 from utility.db import connect_db, close_db
-import time
+from utility.logger import endpoint_hit
+from utility.enums import LogEndpoint, LogMode
 from ida import ida_app, IDA_ISS_SHARED_KEY
 
 if not IDA_ISS_SHARED_KEY:
@@ -19,7 +21,7 @@ fernet = Fernet(IDA_ISS_SHARED_KEY.encode())
 # CREATE record
 @ida_app.route('/records', method="POST")
 def create_record():
-    print("🎯[POST]/records")
+    endpoint_hit(LogEndpoint.RECORDS, LogMode.POST)
 
     con = None
     cursor = None
@@ -78,7 +80,7 @@ def create_record():
         # close the connection
         close_db(con, cursor)
         # return the new record
-        return {"data": record}
+        return record
 
     # ValueError can be raised by validation or DB checks
     except ValueError as e:
@@ -100,17 +102,16 @@ def create_record():
 # READ (get) all records
 @ida_app.route('/records', method="GET")
 def get_all_records():
-    print("🎯[GET]/records")
+    endpoint_hit(LogEndpoint.RECORDS, LogMode.GET)
 
     con = None
     cursor = None
 
     try:
         con, cursor = connect_db()
-
-        # fetch all records
         cursor.execute('SELECT * FROM records')
         rows = cursor.fetchall()
+        close_db(con, cursor)
 
         # create a dictionary list of records
         records = []
@@ -123,28 +124,13 @@ def get_all_records():
                 "file": row[4],
             }
             records.append(record)
+        # convert the dictionary to json
+        records = json.dumps(records)
 
-        records_json = json.dumps(records)
-        print("records json /records: ", records_json)
-        # response.content_type = 'application/json'
-        # response.status = 200
-        # response.body = records_json
-
-        # print to server console
-        print("🟢[GET]/records: Records fetched successfully")
-
-        # close the connection
-        close_db(con, cursor)
-
-        # return response
-        response.body = records_json
-        response.status = 200
-        response.content_type = 'application/json'
-        # return response(body=records_json, content_type='application/json', status=200)
-        return
+        # return json list of records
+        return {"records": records}
     except Exception as e:
-        if con is not None and cursor is not None:
-            close_db(con, cursor)
+        close_db(con, cursor)
         # print to server console
         print(f"🔴[GET]/records: {str(e)}")
         # return message
@@ -155,7 +141,7 @@ def get_all_records():
 # READ (POST) record by id
 @ida_app.route('/records/<id:int>', method="POST")
 def get_record(id):
-    print("🎯[POST]/records/<id:int>")
+    endpoint_hit(LogEndpoint.RECORDS, LogMode.POST, "id:int")
 
     con = None
     cursor = None
@@ -214,7 +200,7 @@ def get_record(id):
 # UPDATE (PUT) record by id
 @ida_app.route('/records/<id:int>', method='PUT')
 def update_record(id):
-    print("🎯[PUT]/records/<id:int>")
+    endpoint_hit(LogEndpoint.RECORDS, LogMode.PUT, "id:int")
 
     con = None
     cursor = None
@@ -308,7 +294,7 @@ def update_record(id):
 # DELETE record by id
 @ida_app.route('/records/<id:int>', method='DELETE')
 def delete_record(id):
-    print("🎯[DELETE]/records/<id:int>")
+    endpoint_hit(LogEndpoint.RECORDS, LogMode.DELETE, "id:int")
 
     con = None
     cursor = None

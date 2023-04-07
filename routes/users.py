@@ -12,7 +12,7 @@ from ida import ida_app
 # CREATE (post) user
 @ida_app.route('/users', method='POST')
 def create_user():
-    print("🎯[POST]/users")
+    endpoint_hit(LogEndpoint.USERS, LogMode.POST)
 
     con = None
     cursor = None
@@ -129,7 +129,7 @@ def create_user():
 # READ (get) all users
 @ida_app.route('/users', method='GET')
 def get_all_users():
-    print("🎯[GET]/users")
+    endpoint_hit(LogEndpoint.USERS, LogMode.GET)
 
     con = None
     cursor = None
@@ -194,7 +194,7 @@ def get_all_users():
 # READ (POST; PLEASE READ THE ABOVE) user by id
 @ida_app.route('/users/<id:int>', method='POST')
 def get_user(id):
-    print("🎯[POST]/users/<id:int>")
+    endpoint_hit(LogEndpoint.USERS, LogMode.POST, "id:int")
 
     con = None
     cursor = None
@@ -249,7 +249,7 @@ def get_user(id):
 # UPDATE (put) user by id
 @ida_app.route('/users/<id:int>', method='PUT')
 def update_user(id):
-    print("🎯[PUT]/users/<id:int>")
+    endpoint_hit(LogEndpoint.USERS, LogMode.PUT, "id:int")
 
     con = None
     cursor = None
@@ -351,7 +351,7 @@ def update_user(id):
 # DELETE (delete) user by id
 @ida_app.route('/users/<id:int>', method='DELETE')
 def delete_user(id):
-    print("🎯[DELETE]/users/<id:int>")
+    endpoint_hit(LogEndpoint.USERS, LogMode.DELETE, "id:int")
 
     con = None
     cursor = None

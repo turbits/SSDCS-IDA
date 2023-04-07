@@ -20,8 +20,9 @@ def render_index():
 
     # if theres user cookies, check validity
     con, cursor = connect_db()
-    cursor.execute('SELECT * FROM user_ref WHERE uuid = ?', (cookie_uuid,))
+    cursor.execute('SELECT * FROM user_ref WHERE uuid =?', (cookie_uuid,))
     row = cursor.fetchone()
+    close_db(con, cursor)
 
     if row is not None:
         session_uuid = row[1]
@@ -74,6 +75,7 @@ def login():
     # if checks pass, find the user in the DB by username
     cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
     row = cursor.fetchone()
+    close_db(con, cursor)
 
     if row is not None:
         user_id = row[0]
@@ -86,8 +88,11 @@ def login():
         return template('templates/login/index.tpl', error='Invalid username or password.', success=None, session_uuid=None, username=None, data=None)
 
     # if the password matches, fetch user's UUID via user_ref table
+    con, cursor = connect_db()
     cursor.execute('SELECT * FROM user_ref WHERE user_id = ?', (user_id,))
     row = cursor.fetchone()
+    close_db(con, cursor)
+
     session_uuid = row[1]
 
     # if the UUID is not found, return an error
@@ -105,9 +110,6 @@ def login():
 
     response.set_cookie('session_uuid', cookie_uuid, path='/', max_age=3600)
     response.set_cookie('username', cookie_username, path='/', max_age=3600)
-
-    # close the connection
-    close_db(con, cursor)
 
     # redirect to index
     print("redirect to index")
@@ -147,7 +149,6 @@ def render_dashboard():
     else:
         try:
             con, cursor = connect_db()
-
             # see if uuid is valid
             cursor.execute('SELECT * FROM user_ref WHERE uuid = ?', (session_uuid,))
             row = cursor.fetchone()
@@ -155,10 +156,15 @@ def render_dashboard():
             # see if user is admin
             cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
             row2 = cursor.fetchone()
+
+            close_db(con, cursor)
+
+            # if user is admin, set is_admin to True
             if row2[7] == 1:
                 print("🔵 INFO: User is admin.")
                 is_admin = True
 
+            # if uuid is not valid, delete cookies and redirect to login
             if row is None:
                 print("🔴 ERROR: Invalid session UUID, redirecting to login.")
                 # if uuid is not valid, delete cookies and redirect to login
@@ -167,28 +173,25 @@ def render_dashboard():
                 return template('templates/login/index.tpl', error='Please log in to access the dashboard.', success=None, session_uuid=None, username=None)
             else:
                 # if uuid is valid, get data and render dashboard
-                # data = cursor.execute('SELECT * FROM records ORDER BY id DESC').fetchall()
-
-                # get data from db
-                # the url to our records endpoint
-                url = "http://localhost:8080/records"
-                # get response from endpoint
                 try:
-                    res = requests.get(url, timeout=5)
+                    print("getting data from endpoint")
+                    # get response from endpoint
+                    res = requests.get("http://localhost:8080/records", timeout=5)
 
-                    print(f"🐞[DEBUG]:res:\n{res.text}")
+                    print(f"data from endpoint:\n{res.json()}")
                     # if response is OK (200), continue
                     if res.status_code == 200:
                         # decode the response and load it into a json object
-                        # records_json = json.loads(response.body)
+                        print("res 200")
 
                         # this json object is a list of records in the database, we pass this to the template below
-                        return template('templates/dashboard/index.tpl', error=None, success=None, session_uuid=request.get_cookie('session_uuid'), username=request.get_cookie('username'), data=res.body)
+                        return template('templates/dashboard/index.tpl', error=None, success=None, session_uuid=request.get_cookie('session_uuid'), username=request.get_cookie('username'), data=res.json())
                     else:
                         print(f"🔴[GET]/dashboard:code:{res.status_code}")
                         # if response is not OK, return an error
                         return template('templates/dashboard/index.tpl', error=f"Code:{res.status_code}\nReason:{res.status_line}", success=None, session_uuid=request.get_cookie('session_uuid'), username=request.get_cookie('username'), data=None)
                 except Exception as e:
+                    close_db(con, cursor)
                     print(f"🔴[GET]/dashboard:Request to '/records':\n {str(e)}")
                 # important: ideally, we would implement efficient storing of data retrieved from the DB, in local storage or some other cache so we didn't have to hit the DB every time we wanted to render the dashboard
 
