@@ -78,7 +78,7 @@ def create_record():
         print(f'🟢 OK(200): Record created successfully: {record["name"]}')
 
         # close the connection
-        close_db(con, cursor)
+        close_db(con)
         # return the new record
         return record
 
@@ -86,7 +86,7 @@ def create_record():
     except ValueError as e:
         response.status = 400
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         print(f"🔴 ERROR(400): {str(e)}")
         return {"message": f"Invalid request body: {str(e)}"}
 
@@ -94,7 +94,7 @@ def create_record():
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         print(f"🔴 ERROR(500): {str(e)}")
         return {"message": f"Unhandled exception when creating record: {str(e)}"}
 
@@ -111,7 +111,7 @@ def get_all_records():
         con, cursor = connect_db()
         cursor.execute('SELECT * FROM records')
         rows = cursor.fetchall()
-        close_db(con, cursor)
+        close_db(con)
 
         # create a dictionary list of records
         records = []
@@ -130,7 +130,7 @@ def get_all_records():
         # return json list of records
         return {"records": records}
     except Exception as e:
-        close_db(con, cursor)
+        close_db(con)
         # print to server console
         print(f"🔴[GET]/records: {str(e)}")
         # return message
@@ -177,12 +177,12 @@ def get_record(id):
         print(f'🟢 OK(200): Record fetched: {record["name"]}')
 
         # close the connection
-        close_db(con, cursor)
+        close_db(con)
         return {"data": record}
     except ValueError:
         response.status = 404
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print("🔴 ERROR(404): Record not found")
         # return message
@@ -190,7 +190,7 @@ def get_record(id):
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
         # return message
@@ -270,13 +270,13 @@ def update_record(id):
         print(f'🟢 OK(200): Record updated: {record["name"]}')
 
         # close the DB connection
-        close_db(con, cursor)
+        close_db(con)
         # return the updated user
         return {"data": record}
     except ValueError:
         response.status = 404
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print("🔴 ERROR(404): Record not found")
         # return message
@@ -284,7 +284,7 @@ def update_record(id):
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
         # return message
@@ -330,14 +330,14 @@ def delete_record(id):
         # print to server console
         print(f'🟢 OK(200): Record deleted: {name}')
         # close connection
-        close_db(con, cursor)
+        close_db(con)
         # return message
         return {"message": f"Record '{name}' deleted successfully"}
 
     except ValueError:
         response.status = 404
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print("🔴 ERROR(404): Record not found")
         # return message
@@ -345,7 +345,7 @@ def delete_record(id):
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
         # return message

@@ -102,7 +102,7 @@ def create_user():
         print(f"🟢[POST]/users:create_user(): {newuser['username']}")
 
         # close the connection
-        close_db(con, cursor)
+        close_db(con)
         
         # return response
         return response(newuser_json, status=201, headers={'Content-Type': 'application/json'})
@@ -110,7 +110,7 @@ def create_user():
     # ValueError can be raised by validation or DB checks
     except ValueError as e:
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print(f"🔴[POST]/users:{str(e)}")
         # return message
@@ -119,7 +119,7 @@ def create_user():
     # unhandled
     except Exception as e:
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print(f"🔴[POST]/users:{str(e)}")
         # return message
@@ -170,13 +170,13 @@ def get_all_users():
         print("🟢 OK(200): Users fetched successfully")
 
         # close the connection
-        close_db(con, cursor)
+        close_db(con)
         # return response
         return response(users_json, status=200, headers={'Content-Type': 'application/json'})
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
         # return message
@@ -226,12 +226,12 @@ def get_user(id):
         print(f'🟢 OK(200): User fetched: {user["username"]}')
 
         # close the connection
-        close_db(con, cursor)
+        close_db(con)
         return {"data": user}
     except ValueError:
         response.status = 404
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print("🔴 ERROR(404): User not found")
         # return message
@@ -239,7 +239,7 @@ def get_user(id):
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
         # return message
@@ -327,13 +327,13 @@ def update_user(id):
         print(f'🟢 OK(200): User updated: {user["username"]}')
 
         # close the DB connection
-        close_db(con, cursor)
+        close_db(con)
         # return the updated user
         return {"data": user}
     except ValueError:
         response.status = 404
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print("🔴 ERROR(404): User not found")
         # return message
@@ -341,7 +341,7 @@ def update_user(id):
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
         # return message
@@ -387,14 +387,14 @@ def delete_user(id):
         # print to server console
         print(f'🟢 OK(200): User deleted: {username}')
         # close connection
-        close_db(con, cursor)
+        close_db(con)
         # return message
         return {"message": f"User '{username}' deleted successfully"}
 
     except ValueError:
         response.status = 404
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print("🔴 ERROR(404): User not found")
         # return message
@@ -402,7 +402,7 @@ def delete_user(id):
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
         # return message

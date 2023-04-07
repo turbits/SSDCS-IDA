@@ -22,7 +22,7 @@ def render_index():
     con, cursor = connect_db()
     cursor.execute('SELECT * FROM user_ref WHERE uuid =?', (cookie_uuid,))
     row = cursor.fetchone()
-    close_db(con, cursor)
+    close_db(con)
 
     if row is not None:
         session_uuid = row[1]
@@ -75,7 +75,7 @@ def login():
     # if checks pass, find the user in the DB by username
     cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
     row = cursor.fetchone()
-    close_db(con, cursor)
+    close_db(con)
 
     if row is not None:
         user_id = row[0]
@@ -91,7 +91,7 @@ def login():
     con, cursor = connect_db()
     cursor.execute('SELECT * FROM user_ref WHERE user_id = ?', (user_id,))
     row = cursor.fetchone()
-    close_db(con, cursor)
+    close_db(con)
 
     session_uuid = row[1]
 
@@ -156,9 +156,9 @@ def render_dashboard():
             # see if user is admin
             cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
             row2 = cursor.fetchone()
-
-            close_db(con, cursor)
-
+            print("closing con")
+            close_db(con)
+            print("con closed")
             # if user is admin, set is_admin to True
             if row2[7] == 1:
                 print("🔵 INFO: User is admin.")
@@ -191,7 +191,7 @@ def render_dashboard():
                         # if response is not OK, return an error
                         return template('templates/dashboard/index.tpl', error=f"Code:{res.status_code}\nReason:{res.status_line}", success=None, session_uuid=request.get_cookie('session_uuid'), username=request.get_cookie('username'), data=None)
                 except Exception as e:
-                    close_db(con, cursor)
+                    close_db(con)
                     print(f"🔴[GET]/dashboard:Request to '/records':\n {str(e)}")
                 # important: ideally, we would implement efficient storing of data retrieved from the DB, in local storage or some other cache so we didn't have to hit the DB every time we wanted to render the dashboard
 

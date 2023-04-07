@@ -15,24 +15,7 @@ def connect_db():
         return {"message": f"Could not connect to database {str(e)}"}
 
 
-def close_db(con, cursor):
-    with con:
-        if con is not None:
-            con.close()
-        if cursor is not None:
-            cursor.close()
+def close_db(con):
+    if con is not None:
+        con.close()
     return
-
-
-
-
-# try:
-#     print("🔵[SQLITE]: Closing database connection")
-#     if con is not None:
-#         con.close()
-#     # if cursor is not None:
-#     #     cursor.close()
-#     return
-# except sqlite3.Error as e:
-#     print(f"🔴 ERROR(DB):Couldnt close\n{str(e)}")
-#     return {"message": f"Could not close database connection {str(e)}"}

@@ -60,14 +60,14 @@ def create_log(level, message, author_id, author_name):
         print(f"🟢 OK(200): Log created for {logevent.message}, initiatior:{logevent.author_name}")
 
         # close the connection
-        close_db(con, cursor)
+        close_db(con)
         return
 
     # ValueError can be raised by validation or DB checks
     except ValueError as e:
         response.status = 400
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print(f"🔴 ERROR(400): {str(e)}")
         # return message
@@ -77,7 +77,7 @@ def create_log(level, message, author_id, author_name):
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
         # return message
@@ -125,14 +125,14 @@ def get_all_logs():
         print("🟢 OK(200): LogEvents fetched successfully")
 
         # close the connection
-        close_db(con, cursor)
+        close_db(con)
         # return message
         return response(logs_json, status=200, content_type="application/json")
     except Exception as e:
         response.status = 500
         response.body = str(e)
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
         # return message
@@ -179,13 +179,13 @@ def get_log(id):
         # print to server console
         print("🟢 OK(200): LogEvent fetched successfully")
         # close the connection
-        close_db(con, cursor)
+        close_db(con)
         # return response
         return response(logevent_json, status=200, content_type="application/json")
     except ValueError:
         response.status = 404
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print("🔴 ERROR(404): LogEvent not found")
         # return message
@@ -193,7 +193,7 @@ def get_log(id):
     except Exception as e:
         response.status = 500
         if con is not None and cursor is not None:
-            close_db(con, cursor)
+            close_db(con)
         # print to server console
         print(f"🔴 ERROR(500): {str(e)}")
         # return message
