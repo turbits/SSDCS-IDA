@@ -8,7 +8,7 @@ import json
 import signal
 import threading
 import requests
-from flask import Flask, route, response, request
+from flask import Flask
 from dotenv import load_dotenv
 from cryptography.fernet import Fernet
 
@@ -17,12 +17,11 @@ load_dotenv()
 # =================== ENV ===================
 # the key and config should be well secured on a real app; the .env is pushed with this repo but in a real project you would never expose secrets
 IDA_ISS_SHARED_KEY = os.getenv("IDA_ISS_SHARED_KEY")
-ISS_HOST = os.getend("IDA_URL")
-ISS_PORT = os.getenv("IDA_PORT")
-ISS_DEBUG = os.getenv("IDA_DEBUG")
+ISS_HOST = os.getenv("ISS_URL")
+ISS_PORT = os.getenv("ISS_PORT")
+ISS_DEBUG = os.getenv("ISS_DEBUG")
+ISS_TARGET_URL = os.getenv("ISS_TARGET_URL")
 ISS_SEND_TIMEOUT = os.getenv("ISS_SEND_TIMEOUT")
-ISS_TARGET_URL = os.getend("ISS_TARGET_URL")
-ISS_MICROSERVICE_PORT = os.getenv("ISS_PORT")
 
 if not IDA_ISS_SHARED_KEY:
     raise ValueError("Fernet key not found in .env")
@@ -64,7 +63,7 @@ def send_data():
             # send request
             res = requests.post(ISS_TARGET_URL, data=encrypted_data, headers={"Content-Type": "application/octet-stream"})
             # print response to server console
-            print(f"🟢 ISS-RESPONSE: {res.read().decode()}")
+            # print(f"🟢 ISS-RESPONSE: {res.read().decode()}")
             # sleep for <ISS_SEND_TIMEOUT> (default 10) seconds
             time.sleep(ISS_SEND_TIMEOUT)
         except Exception as e:
