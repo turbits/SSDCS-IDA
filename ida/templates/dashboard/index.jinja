@@ -1,0 +1,51 @@
+{% include "includes/head.jinja" %}
+{% include "includes/nav.jinja" %}
+<div class="content">
+    <h1>IDA System Dashboard</h1>
+    
+    {% if session_is_admin %}
+        <p class="info-message br">Admin Session</p>
+    {% endif %}
+    
+    <a href="{{ url_for('pages.dashboard') }}" class="btn-primary br">Refresh</a>
+    {% if session_uuid and username %}
+        {% if data %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Created At</th>
+                        <th>Revised At</th>
+                        <th>File</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr>
+                            <td>{{ row[0] }}</td>
+                            <td>{{ row[1] }}</td>
+                            <td>{{ row[2] }}</td>
+                            <td>{{ row[3] }}</td>
+                            <td>{{ row[4] }}</td>
+                            <td>
+                                <a href="#">Edit</a>
+                                <a href="#">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="info-message br">No data found.</p>
+        {% endif %}
+    {% else %}
+        <script>window.location.href = "{{ url_for('pages.login', error='You are not logged in.') }}";</script>
+    {% endif %}
+    {% if error %}
+        <p class="error-message br">{{ error }}</p>
+    {% endif %}
+    {% if success %}
+        <p class="success-message br">{{ success }}</p>
+    {% endif %}
+</div>

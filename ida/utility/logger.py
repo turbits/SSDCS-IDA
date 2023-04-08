@@ -1,6 +1,6 @@
 import uuid
-from datetime import datetime
 import time
+from datetime import datetime
 from models.log_event import LogEvent
 from utility.enums import LogMode, LogEndpoint, LogLevel
 
@@ -21,3 +21,4 @@ def endpoint_hit(endpoint: LogEndpoint, mode: LogMode, param_and_type: str = Non
         print(f"🎯[{mode.name}|{_endpoint}/<{param_and_type}>] ({_datetime})")
     else:
         print(f"🎯[{mode.name}|{_endpoint}] ({_datetime})")
+    return
