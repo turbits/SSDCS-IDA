@@ -17,7 +17,7 @@ load_dotenv()
 # =================== ENV ===================
 # the key and config should be well secured on a real app; the .env is pushed with this repo but in a real project you would never expose secrets
 IDA_ISS_SHARED_KEY = os.getenv("IDA_ISS_SHARED_KEY")
-ISS_HOST = os.getenv("ISS_URL")
+ISS_HOST = os.getenv("ISS_HOST")
 ISS_PORT = os.getenv("ISS_PORT")
 ISS_DEBUG = os.getenv("ISS_DEBUG")
 ISS_TARGET_URL = os.getenv("ISS_TARGET_URL")
