@@ -1,8 +1,8 @@
 import json
 import time
 from datetime import datetime
+from flask import request
 from utility.enums import LogMode, LogLevel, LogEndpoint
-from bottle import request, response
 
 
 class LogEvent():

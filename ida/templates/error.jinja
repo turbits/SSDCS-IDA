@@ -1,0 +1,9 @@
+{% include "includes/head.jinja" %}
+{% include "includes/nav.jinja" %}
+<div class="content">
+    {% if error %}
+        <h1>{{ code }}</h1>
+        <p class="error-message br">{{ message }}</p>
+    {% endif %}
+</div>
+{% include "includes/footer.html" %}

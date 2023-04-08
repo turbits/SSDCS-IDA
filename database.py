@@ -8,12 +8,12 @@ import time
 # check if database file exists;
 # if it does we delete it, recreate it, and reseed it
 try:
-    os.remove("ida.db")
+    os.remove("ida/ida.db")
 except OSError:
     pass
 
 # connect to the database; this will create the database file if it doesnt exist
-con = sqlite3.connect("ida.db")
+con = sqlite3.connect("ida/ida.db")
 cursor = con.cursor()
 
 # ===================== USERREF TABLE =====================

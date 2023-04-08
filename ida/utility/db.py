@@ -6,9 +6,9 @@ def connect_db():
     cursor = None
 
     try:
-        con = sqlite3.connect("ida.db")
+        con = sqlite3.connect("ida/ida.db")
         cursor = con.cursor()
-        print("🔵[SQLITE]: Connected to database")
+        print("🔵[SQLITE]: Opened db connection")
         return con, cursor
     except sqlite3.Error as e:
         print("🔴 ERROR(DB): Could not connect to database.")
@@ -17,5 +17,6 @@ def connect_db():
 
 def close_db(con):
     if con is not None:
+        print("🔵[SQLITE]: Closed db connection")
         con.close()
     return
