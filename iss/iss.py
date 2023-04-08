@@ -63,8 +63,8 @@ def send_data():
             # send request
             res = requests.post(ISS_TARGET_URL, data=encrypted_data, headers={"Content-Type": "application/octet-stream"})
             # print response to server console
-            # print(f"🟢 ISS-RESPONSE: {res.read().decode()}")
-            # sleep for <ISS_SEND_TIMEOUT> (default 10) seconds
+            print(f"🟢 ISS: Response from IDA: {res}")
+            # sleep
             time.sleep(ISS_SEND_TIMEOUT)
         except Exception as e:
             print(f"🔴 ISS-ERR: {str(e)}")
