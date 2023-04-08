@@ -14,14 +14,6 @@ from utility.db import connect_db, close_db
 from utility.logger import endpoint_hit
 from utility.enums import LogEndpoint, LogMode
 
-load_dotenv()
-
-IDA_ISS_SHARED_KEY = os.getenv("IDA_ISS_SHARED_KEY")
-if not IDA_ISS_SHARED_KEY:
-    raise ValueError("Fernet key not found in .env")
-
-fernet = Fernet(IDA_ISS_SHARED_KEY.encode())
-
 records_bp = Blueprint('records', __name__)
 
 
@@ -61,23 +53,32 @@ def records():
         con = None
         cursor = None
 
+        load_dotenv()
+
+        IDA_ISS_SHARED_KEY = os.getenv("IDA_ISS_SHARED_KEY")
+        if not IDA_ISS_SHARED_KEY:
+            raise ValueError("Fernet key not found in .env")
+
+        fernet = Fernet(IDA_ISS_SHARED_KEY.encode())
+
         try:
             con, cursor = connect_db()
 
-            # decrypt the data
-            encrypted_data = request.body.read()
-            decrypted_data = fernet.decrypt(encrypted_data)
-            decrypted_string = decrypted_data.decode('utf-8')
-            data = json.loads(decrypted_string)
+            # decrypt the data and get back our json object
+            payload_encrypted = request.data
+            payload_decrypted = fernet.decrypt(payload_encrypted)
+            payload_json = json.loads(payload_decrypted)
+
+            print(f"payload_json: {payload_json}")
 
             # combine record data into a dict
             # revised_at is initialized to NULL on record creation (None in Python, it is inserted as NULL in SQLite)
-            # created_at is initialized to the current unix timestamp; we can use `datetime.datetime.fromtimestamp(<timestamp>)` to convert it to a human readable datetime
+            # created_at is initialized to the current unix timestamp
             record = {
-                "name": data.get('name'),
+                "name": payload_json['name'],
                 "created_at": int(time.time()),
                 "revised_at": None,
-                "file": data.get('file'),
+                "file": payload_json['file'],
             }
 
             # validate the record data using the Record model and the data above, passed through a generic validation function
