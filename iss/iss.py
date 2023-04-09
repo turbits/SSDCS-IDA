@@ -84,7 +84,7 @@ def send_data():
         payload = encrypted_data.decode()
 
         # send the request to IDA
-        print("🧑‍🚀 ISS: Sending payload to IDA")
+        print("🚀 ISS: Sending payload to IDA")
 
         res = requests.post(ISS_TARGET_URL, data=payload, headers={"Content-Type": "application/text"}, timeout=ISS_SEND_TIMEOUT)
 
