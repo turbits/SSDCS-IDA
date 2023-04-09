@@ -94,26 +94,33 @@ def get_all_logs():
         if row is not None and row[7] == 1:
             session_is_admin = True
 
-        # fetch all logs
-        cursor.execute('SELECT * FROM logs')
-        rows = cursor.fetchall()
-        close_db(con)
+        if session_is_admin:
+            # fetch all logs
+            cursor.execute('SELECT * FROM logs')
+            rows = cursor.fetchall()
+            close_db(con)
 
-        # create a dictionary list of logs
-        logevents = []
-        for row in rows:
-            logevents.append({
-                "id": row[0],
-                "level": row[1],
-                "message": row[2],
-                "created_at": row[3],
-                "author_id": row[4],
-                "author_name": row[5]
-            })
+            # create a dictionary list of logs
+            logevents = []
+            for row in rows:
+                logevents.append({
+                    "id": row[0],
+                    "level": row[1],
+                    "message": row[2],
+                    "created_at": row[3],
+                    "author_id": row[4],
+                    "author_name": row[5]
+                })
 
-            res = make_response(jsonify(logevents))
+                res = make_response(jsonify(logevents))
+                res.headers['Content-Type'] = 'application/json'
+                res.status_code = 200
+                return res
+        else:
+            close_db(con)
+            res = make_response({"message": "You are not authorized to perform this action"})
             res.headers['Content-Type'] = 'application/json'
-            res.status_code = 200
+            res.status_code = 401
             return res
     except Exception as e:
         close_db(con)
