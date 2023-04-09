@@ -83,9 +83,16 @@ def get_all_logs():
 
     con = None
     cursor = None
+    session_is_admin = False
 
     try:
         con, cursor = connect_db()
+
+        # see if user is admin
+        cursor.execute('SELECT * FROM users WHERE username = ?', (request.cookies.get('username'),))
+        row = cursor.fetchone()
+        if row is not None and row[7] == 1:
+            session_is_admin = True
 
         # fetch all logs
         cursor.execute('SELECT * FROM logs')
@@ -107,14 +114,12 @@ def get_all_logs():
             res = make_response(jsonify(logevents))
             res.headers['Content-Type'] = 'application/json'
             res.status_code = 200
-
             return res
     except Exception as e:
         close_db(con)
         res = make_response({"message": f"Unhandled exception when fetching logevents: {str(e)}"})
         res.headers['Content-Type'] = 'application/json'
         res.status_code = 500
-
         return res
 
 
@@ -132,7 +137,7 @@ def get_log(id):
         con, cursor = connect_db()
 
         # see if user is admin
-        cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
+        cursor.execute('SELECT * FROM users WHERE username =?', (request.cookies.get('username'),))
         row = cursor.fetchone()
         if row is not None and row[7] == 1:
             session_is_admin = True
@@ -158,26 +163,22 @@ def get_log(id):
             res = make_response(jsonify(logevent))
             res.headers['Content-Type'] = 'application/json'
             res.status_code = 200
-
             return res
         else:
             close_db(con)
             res = make_response({"message": "You are not authorized to perform this action"})
             res.headers['Content-Type'] = 'application/json'
             res.status_code = 401
-
             return res
     except ValueError:
         close_db(con)
         res = make_response({"message": "LogEvent not found"})
         res.headers['Content-Type'] = 'application/json'
         res.status_code = 404
-
         return res
     except Exception as e:
         close_db(con)
         res = make_response({"message": f"Unhandled exception when fetching logevent: {str(e)}"})
         res.headers['Content-Type'] = 'application/json'
         res.status_code = 500
-
         return res

@@ -1,9 +1,9 @@
 import time
 import json
 import requests
-from flask import Blueprint, request, redirect, render_template, jsonify, make_response, url_for
+from flask import Blueprint, request, redirect, render_template, jsonify, make_response, url_for, session, flash
 from utility.validate_data import validate_username, validate_password
-from utility.db import connect_db, close_db
+from utility.db import connect_db, close_db, check_if_user_admin
 from utility.logger import endpoint_hit
 from utility.enums import LogEndpoint, LogMode, LogLevel
 
@@ -14,189 +14,254 @@ pages_bp = Blueprint('pages', __name__)
 def home():
     endpoint_hit(LogEndpoint.INDEX, LogMode.GET)
 
-    cookie_uuid = request.cookies.get('session_uuid')
-    cookie_username = request.cookies.get('username')
+    # get session vars
+    session_uuid = session['uuid'] if 'uuid' in session else None
 
-    # if theres user cookies, check validity
-    if cookie_uuid is not None:
+    if session_uuid is not None:
+        # if there is a session uuid; lets check validity
         con, cursor = connect_db()
-        cursor.execute('SELECT * FROM user_ref WHERE uuid =?', (cookie_uuid,))
+        cursor.execute('SELECT * FROM user_ref WHERE uuid =?', (session_uuid,))
         row = cursor.fetchone()
         close_db(con)
-        # if the session_uuid is valid, render index with user data
-        if row is not None and row[1] == cookie_uuid:
-            res = make_response(render_template('index.jinja', session_uuid=cookie_uuid, username=cookie_username))
-            res.status_code = 200
-            # if the session_uuid is valid, render index with user data
-            return res
 
-    # otherwise, render index without user data
-    res = make_response(render_template('index.jinja'))
-    res.status_code = 200
-    return res
+        if row[1] is None:
+            # uuid is invalid; flash session expiry
+            # behind the scenes, the uuid is actually invalid (meaning it doesnt exist in the user_ref table as a valid uuid), but we don't want to provide more information to a potential attacker so we provide a more generic error message
+            flash('Your session has expired. Please login again.', 'error')
+            # remove session vars if they exist
+            session.pop('uuid', None)
+            session.pop('username', None)
+            session.pop('is_admin', None)
+        else:
+            # the uuid is valid; lets just render the dashboard
+            return render_template('index.jinja', session=session)
+    else:
+        # there is no session uuid; clear any lingering session vars
+        session.pop('uuid', None)
+        session.pop('username', None)
+        session.pop('is_admin', None)
+    # render the index page
+    return render_template('index.jinja', session=session)
 
 
 @pages_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == "GET":
+    if request.method == 'GET':
         endpoint_hit(LogEndpoint.LOGIN, LogMode.GET)
+        session_is_admin = check_if_user_admin(session['username']) if 'username' in session else False
+        session['is_admin'] = session_is_admin
 
-        session_uuid = request.cookies.get('session_uuid')
-        username = request.cookies.get('username')
-        print(f"🔵 INFO: Session UUID: {session_uuid} (from cookie)")
-
-        # if there is a session_uuid cookie, redirect to index
-        if session_uuid is not None:
-            # res = make_response(redirect('/'))
-            res = make_response(render_template('index.jinja', session_uuid=session_uuid, username=username, error='You are already logged in.'))
-            return res
+        # if there is a uuid in session, redirect to index
+        if 'uuid' in session:
+            flash('You are already logged in.')
+            return redirect(url_for('pages.home'))
 
         # otherwise, render the login page
-        res = make_response(render_template('login/index.jinja'))
-        return res
-    elif request.method == "POST":
-        endpoint_hit(LogEndpoint.INDEX, LogMode.POST)
+        # res = make_response(render_template('login/index.jinja'))
+        # return res
+        return render_template('login/index.jinja')
+    elif request.method == 'POST':
+        endpoint_hit(LogEndpoint.LOGIN, LogMode.POST)
 
-        user_id = None
-        user_username = None
-        user_pw = None
-
+        # initialise some vars for verifying user credentials later
+        id_from_db = None
+        username_from_db = None
+        password_from_db = None
         # get the username and password from the form
-        username = request.form['username']
-        password = request.form['password']
+        username_from_request = request.form['username']
+        password_from_request = request.form['password']
 
-        # validate username and pw
-        _username_check = validate_username(username)
-        _password_check = validate_password(password)
-
+        # validate username and pw provided in login form
+        _username_check = validate_username(username_from_request)
+        _password_check = validate_password(password_from_request)
         # if either of the checks fail, return an error
         if _username_check is not True or _password_check is not True:
-            return render_template('login/index.jinja', error='Invalid username or password.')
+            flash('Invalid username or password.', 'error')
+            return redirect(url_for('pages.login'))
 
+        # if the validation checks pass, try to find the user in the DB by username
         con, cursor = connect_db()
-        # if checks pass, find the user in the DB by username
-        cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
+        cursor.execute('SELECT * FROM users WHERE username =?', (username_from_request,))
         row = cursor.fetchone()
-
+        # if the user exists, fetch the user's ID, username and password from DB
         if row is not None:
-            user_id = row[0]
-            user_username = row[1]
-            user_pw = row[4]
+            id_from_db = row[0]
+            username_from_db = row[1]
+            password_from_db = row[4]
 
-        # if user exists, check if the password matches
-        if user_pw != password or user_id is None:
-            print("🔴 ERROR: Failed Login: Invalid username or password.")
-            return render_template('login/index.jinja', error='Invalid username or password.')
+        # check if the credentials provided and the credentials fetched from the database match
+        if password_from_request != password_from_db or username_from_request != username_from_db:
+            # if they dont match, rerender login and return an error
+            close_db(con)
+            flash('Invalid username or password.', 'error')
+            return render_template('login/index.jinja', session=session)
 
-        # if the password matches, fetch user's UUID via user_ref table
-        cursor.execute('SELECT * FROM user_ref WHERE user_id = ?', (user_id,))
-        row = cursor.fetchone()
+        # if the credentials match, fetch the user's uuid from the user_ref table
+        cursor.execute('SELECT * FROM user_ref WHERE user_id =?', (id_from_db,))
+        row2 = cursor.fetchone()
         close_db(con)
+        # set session var with uuid or None if no row is returned
+        session['uuid'] = row2[1] if row2 is not None else None
 
-        session_uuid = row[1]
-
-        # if the UUID is not found, return an error
-        if session_uuid is None:
+        if session['uuid'] is None:
+            # if the uuid is not found in the database, rerender login and return an error
             # we make this error generic as we don't want to provide contextual information to an attacker
             # "internal server error" is much less useful to an attacker than "user not found"
-            res = make_response(render_template('login/index.jinja', error='Internal server error'))
-            res.status_code = 500
-            return res
+            close_db(con)
+            flash('Internal server error.', 'error')
+            return render_template('login/index.jinja', session=session)
 
-        # user has been authenticated, the session_uuid is fetched and validated
-        # set session cookies and render index
-        # if we were to harden our cookies, we could add the 'domain' parameter, among others: https://www.freecodecamp.org/news/web-security-hardening-http-cookies-be8d8d8016e1/ (Nadalin, 2018)
-        cookie_uuid = str(session_uuid)
-        cookie_username = str(user_username)
+        # one last sanity check to make sure the user exists and the user values are not None
+        if username_from_db is None or password_from_db is None or id_from_db is None or session['uuid'] is None:
+            # if any of the values are None, rerender login and return an error
+            flash('Internal server error.', 'error')
+            return render_template('login/index.jinja', session=session)
 
-        res = make_response(render_template('index.jinja', session_uuid=cookie_uuid, username=cookie_username))
-        res.set_cookie('session_uuid', cookie_uuid, path='/', max_age=3600)
-        res.set_cookie('username', cookie_username, path='/', max_age=3600)
-        res.status_code = 200
-
-        return res
+        # user has been authenticated, and the session_uuid is validated!
+        # set remaining session vars and redirect to the home page
+        session['username'] = str(username_from_db)
+        session['is_admin'] = check_if_user_admin(session['username'])
+        flash('You have successfully logged in.', 'success')
+        print("logged in; redirecting to home")
+        return redirect(url_for('pages.home'))
     else:
-        res = make_response(render_template('login/index.jinja', error='Invalid request method'))
-        res.status_code = 405
-
-        return res
+        flash('Method not allowed.', 'error')
+        return redirect(url_for('pages.login'))
 
 
 @pages_bp.route('/logout', methods=['GET'])
 def logout():
     endpoint_hit(LogEndpoint.LOGOUT, LogMode.GET)
 
-    res = make_response(render_template('index.jinja', success="You've been logged out."))
-    res.status_code = 200
-
-    # delete cookies for site
-    res.delete_cookie('session_uuid', path='/')
-    res.delete_cookie('username', path='/')
-
+    # clear session cookies
+    session.pop('uuid', None)
+    session.pop('username', None)
+    flash('You have successfully logged out.', 'success')
     time.sleep(1)
-
-    return res
+    return redirect(url_for('pages.home'))
 
 
 @pages_bp.route('/dashboard', methods=['GET'])
 def dashboard():
     endpoint_hit(LogEndpoint.DASHBOARD, LogMode.GET)
 
-    # get the session_uuid cookie
-    session_uuid = request.cookies.get('session_uuid')
-    print(f"🔵 INFO: Session UUID: {session_uuid} (from cookie)")
-
-    session_is_admin = False
-    # the data that we pass to the dashboard
-    data = None
+    # get session vars
+    session_uuid = session['uuid'] if 'uuid' in session else None
 
     # if the session_uuid is None, redirect to login
     if session_uuid is None:
-        res = make_response(render_template('login/index.jinja', error='Please log in to access the dashboard.'))
-        res.status_code = 401
-        return res
+        flash('Please log in to access this page.', 'error')
+        return redirect(url_for('pages.login'))
     else:
         try:
             con, cursor = connect_db()
             # see if uuid is valid
             cursor.execute('SELECT * FROM user_ref WHERE uuid = ?', (session_uuid,))
             row = cursor.fetchone()
-
-            # see if user is admin
-            cursor.execute('SELECT * FROM users WHERE username = ?', (request.cookies.get('username'),))
-            row2 = cursor.fetchone()
             close_db(con)
-
-            # if user is admin, set session_is_admin to True
-            if row2[7] == 1:
-                print("🔵 INFO: User is admin.")
-                session_is_admin = True
 
             # if uuid is not valid, delete cookies and redirect to login
             if row is None:
-                res = make_response(render_template('login/index.jinja', error='Please log in to access the dashboard.', session_is_admin=session_is_admin, data=data))
-
-                res.delete_cookie('session_uuid', path='/')
-                res.delete_cookie('username', path='/')
-                res.status_code = 200
+                session.pop('uuid', None)
+                session.pop('username', None)
+                session.pop('is_admin', None)
+                flash('Please log in to access this page.', 'error')
+                return redirect(url_for('pages.login'))
             else:
                 # uuid is valid; continue
-                records = None
-
-                # try:
-                print("getting data from endpoint")
                 records = requests.get("http://127.0.0.1:8080/records", timeout=5)
-
-                res = make_response(render_template('dashboard/index.jinja', session_uuid=request.cookies.get('session_uuid'), username=request.cookies.get('username'), data=records))
-                res.status_code = 200
-            return res
+                return render_template('dashboard/index.jinja', session=session, data=records.json())
         except Exception as e:
             close_db(con)
-            res = make_response(render_template('login/index.jinja', error=f'{str(e)}'))
-            res.status_code = 500
-        finally:
-            return res
+            flash(f'{str(e)}', 'error')
+            return redirect(url_for('pages.login'))
 
 
+@pages_bp.route('/usersview', methods=['GET'])
+def users_view():
+    endpoint_hit(LogEndpoint.USERSVIEW, LogMode.GET)
 
-# Nadalin, A. (2018) Web Security: How to Harden your HTTP cookies. Available at: [https://www.freecodecamp.org/news/web-security-hardening-http-cookies-be8d8d8016e1/](https://www.freecodecamp.org/news/web-security-hardening-http-cookies-be8d8d8016e1/) [Accessed 28 March 2023]
+    # get session vars
+    session_uuid = session['uuid'] if 'uuid' in session else None
+    session_username = session['username'] if 'username' in session else None
+    session_is_admin = check_if_user_admin(session_username) if 'username' in session else False
+
+    # if the session_uuid is None, redirect to login
+    if session_uuid is None:
+        flash('Please log in to access this page.', 'error')
+        return redirect(url_for('pages.login'))
+    else:
+        try:
+            con, cursor = connect_db()
+            # see if uuid is valid
+            cursor.execute('SELECT * FROM user_ref WHERE uuid =?', (session_uuid,))
+            row = cursor.fetchone()
+            close_db(con)
+
+            # if the user is not an admin, redirect to dashboard with error and 401
+            if session_is_admin is False:
+                flash('You are not authorized to view this page.', 'error')
+                return redirect(url_for('pages.dashboard'))
+
+            # if uuid is not valid, delete cookies and redirect to login
+            if row is None:
+                session.pop('uuid', None)
+                session.pop('username', None)
+                flash('Please log in to access this page.', 'error')
+                return redirect(url_for('pages.login'))
+            else:
+                # uuid is valid; continue to request the users and render the usersview page if successful
+                # TODO: should probably add a try/except here to catch any errors
+                res = requests.get("http://127.0.0.1:8080/users", timeout=5)
+                users = res if res.status_code == 200 else None
+                return render_template('usersview/index.jinja', session=session, data=users.json())
+        except Exception as e:
+            # if there is an error, flash error and redirect to dashboard
+            close_db(con)
+            flash(f'{str(e)}', 'error')
+            return redirect(url_for('pages.home'))
+
+
+@pages_bp.route('/logsview', methods=['GET'])
+def logs_view():
+    endpoint_hit(LogEndpoint.LOGSVIEW, LogMode.GET)
+
+    # get session vars
+    session_uuid = session['uuid'] if 'uuid' in session else None
+    session_username = session['username'] if 'username' in session else None
+    session_is_admin = check_if_user_admin(session_username) if 'username' in session else False
+
+    # if the session_uuid is None, redirect to login
+    if session_uuid is None:
+        flash('Please log in to access this page.', 'error')
+        return redirect(url_for('pages.login'))
+    else:
+        try:
+            con, cursor = connect_db()
+            # see if uuid is valid
+            cursor.execute('SELECT * FROM user_ref WHERE uuid =?', (session_uuid,))
+            row = cursor.fetchone()
+
+            close_db(con)
+
+            # if the user is not an admin, redirect to dashboard with error and 401
+            if session_is_admin is False:
+                flash('You are not authorized to view this page.', 'error')
+                return redirect(url_for('pages.dashboard'))
+
+            # if uuid is not valid, delete cookies and redirect to login
+            if row is None:
+                session.pop('uuid', None)
+                session.pop('username', None)
+                flash('Please log in to access this page.', 'error')
+                return redirect(url_for('pages.login'))
+            else:
+                # uuid is valid; continue to request the logs and render the logsview page if successful
+                # TODO: should probably add a try/except here to catch any errors
+                res = requests.get("http://127.0.0.1:8080/logs", timeout=5)
+                logs = res if res.status_code == 200 else None
+                return render_template('logsview/index.jinja', session=session, data=logs.json())
+        except Exception as e:
+            close_db(con)
+            flash(f'{str(e)}', 'error')
+            return redirect(url_for('pages.login'))

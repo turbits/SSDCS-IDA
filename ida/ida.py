@@ -17,6 +17,7 @@ IDA_ISS_SHARED_KEY = os.getenv("IDA_ISS_SHARED_KEY")
 IDA_HOST = os.getenv("IDA_HOST")
 IDA_PORT = os.getenv("IDA_PORT")
 IDA_DEBUG = os.getenv("IDA_DEBUG")
+IDA_SECRET_KEY = os.getenv("IDA_SECRET_KEY")
 
 if not IDA_ISS_SHARED_KEY:
     raise ValueError("Fernet key not found in .env")
@@ -24,10 +25,7 @@ if not IDA_ISS_SHARED_KEY:
 
 # =================== APP ===================
 ida = Flask(__name__)
-ida.host = IDA_HOST
-ida.port = IDA_PORT
-ida.debug = IDA_DEBUG
-
+ida.secret_key = IDA_SECRET_KEY
 
 # =================== ROUTES ===================
 ida.register_blueprint(pages_bp)
@@ -39,4 +37,4 @@ ida.register_blueprint(users_bp)
 
 # =================== MAIN ===================
 if __name__ == '__main__':
-    ida.run(host=IDA_HOST, port=IDA_PORT, debug=IDA_DEBUG)
+    ida.run(host=IDA_HOST, port=IDA_PORT, debug=False)

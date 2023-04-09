@@ -2,8 +2,10 @@
 {% include "includes/nav.jinja" %}
 <div class="content">
     {% if error %}
-        <h1>{{ code }}</h1>
+        <div class="content-header">
+            <h1>IDA System: Error {{ code }}</h1>
+        </div>
         <p class="error-message br">{{ message }}</p>
     {% endif %}
 </div>
-{% include "includes/footer.html" %}
+{% include "includes/footer.jinja" %}

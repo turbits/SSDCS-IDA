@@ -2,27 +2,29 @@
 {% include "includes/nav.jinja" %}
 
 <div class="content">
-    <h1>IDA System Login</h1>
-
-    {% if session_uuid and username %}
-        <script>
-            window.location.href = "{{ url_for('pages.home', error='You are not logged in.') }}";
-        </script>
-    {% else %}
-        <div class="content">
-            <form class="flex-form" action="{{ url_for('pages.login') }}" method="post">
-                <input class="br" type="text" name="username" placeholder="Username"/>
-                <input class="br" type="password" name="password" placeholder="Password"/>
-                <input class="br" type="submit" value="Login"/>
-            </form>
+    <div class="content-inside">
+        <div class="content-header">
+            <h1>IDA System: Login</h1>
         </div>
-    {% endif %}
 
-    {% if error %}
-        <p class="error-message br">{{ error }}</p>
-    {% endif %}
+        {% if session['uuid'] and session['username'] %}
+            <script>
+                window.location.href = "{{ url_for('pages.home') }}";
+            </script>
+        {% else %}
+            <form class="flex-form" action="{{ url_for('pages.login') }}" method="post">
+                <input class="form-input br" type="text" name="username" placeholder="Username"/>
+                <input class="form-input br" type="password" name="password" placeholder="Password"/>
+                <input class="form-input form-input-submit br" type="submit" value="Login"/>
+            </form>
+        {% endif %}
 
-    {% if success %}
-        <p class="success-message br">{{ success }}</p>
-    {% endif %}
+        {% if error %}
+            <p class="error-message br">{{ error }}</p>
+        {% endif %}
+
+        {% if success %}
+            <p class="success-message br">{{ success }}</p>
+        {% endif %}
+    </div>
 </div>

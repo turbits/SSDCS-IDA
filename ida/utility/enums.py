@@ -19,6 +19,8 @@ class LogEndpoint(Enum):
     LOGOUT = 5
     DASHBOARD = 6
     INDEX = 7
+    USERSVIEW = 8
+    LOGSVIEW = 9
 
 
 # TEST log level is used for DEBUG outs and ENDPOINT hits (both used for debug/testing)

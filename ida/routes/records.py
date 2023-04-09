@@ -275,13 +275,22 @@ def record(id):
         con = None
         cursor = None
         session_is_admin = False
+        username = request.cookies.get('username')
+        session_uuid = request.cookies.get('session_uuid')
+
+        if username is None or session_uuid is None:
+            res = make_response({"message": "You must be logged in for this action"})
+            res.headers['Content-Type'] = 'application/json'
+            res.status_code = 401
+            return res
 
         try:
             con, cursor = connect_db()
 
             # see if user is admin
-            cursor.execute('SELECT * FROM users WHERE username = ?', (request.get_cookie('username'),))
+            cursor.execute('SELECT * FROM users WHERE username =?', (request.cookies.get('username'),))
             row = cursor.fetchone()
+            # checking against [7] which is the 'is_admin' property/column
             if row is not None and row[7] == 1:
                 session_is_admin = True
 
@@ -289,10 +298,10 @@ def record(id):
                 # select record with id
                 cursor.execute('SELECT * FROM records WHERE id =?', (id,))
                 row = cursor.fetchone()
-                name = row[1]
 
                 if row is None:
                     raise ValueError()
+                name = row[1]
 
                 # delete record
                 cursor.execute('DELETE FROM records WHERE id =?', (id,))

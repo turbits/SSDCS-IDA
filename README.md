@@ -44,9 +44,9 @@ For Windows: use Powershell or Git Bash to run commands (not CMD)
   - You can check by running `deactivate`; if it returns without an error, you were in the virtual env (so just run activate again to get back in)
   - For Windows, you may also have to run `Set-ExecutionPolicy Unrestricted` in an admin PowerShell session if you get an error about scripts being disabled on this system.
 - Run `pip install -r requirements.txt` to install all required packages and dependencies
-- That's it! Proceed to Run the Project below
+- That's it! Proceed to run the project
 
-## 🏃‍♂️ Run the project
+## 🏃‍♂️ Running the project
 
 - Ensure you're in the virtual environment; usually `source ./venv/Scripts/activate`, otherwise see prerequisites above
 - Install all required packages as listed in the prerequisites section
@@ -57,6 +57,17 @@ For Windows: use Powershell or Git Bash to run commands (not CMD)
 - Access the web interface at `http://127.0.0.1:8080/`
 - Open a new terminal window and activate the virtual environment in this window as well, `source ./venv/Scripts/activate`
 - Run `python iss/iss.py` in the new window to start the ISS microservice; this serves as a mock ISS. It runs on 127.0.0.1, port 8081, and sends a POST request to `IDA/records` to create a new record every 10 seconds.
+
+## 👤 Logging Into IDA
+
+- Navigate to `http://127.0.0.1:8080` in a browser
+- To log in to the app, you may use one of the default accounts. Both provide different levels of authorization. The default accounts are:
+  - User - can view and edit records only
+    - Username: `user`
+    - Password: `user123`
+  - Admin - can view, edit, and delete records and users, as well as view logs
+    - Username: `admin`
+    - Password: `admin123`
 
 ## 👀 Features
 

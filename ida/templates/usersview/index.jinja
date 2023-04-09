@@ -2,7 +2,7 @@
 {% include "includes/nav.jinja" %}
 <div class="content">
     <div class="content-header">
-        <h1>IDA System: Records</h1>
+        <h1>IDA System: Users</h1>
     </div>
     
     {% if session['uuid'] and session['username'] %}
@@ -11,10 +11,14 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
+                        <th>Username</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Password</th>
+                        <th>Last Logon</th>
                         <th>Created At</th>
-                        <th>Revised At</th>
-                        <th>File</th>
+                        <th>Is Admin</th>
+                        <th>Is Disabled</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -22,12 +26,15 @@
                     {% for item in data %}
                         <tr>
                             <td>{{ item['id'] }}</td>
-                            <td>{{ item['name'] }}</td>
+                            <td>{{ item['username'] }}</td>
+                            <td>{{ item['first_name'] }}</td>
+                            <td>{{ item['last_name'] }}</td>
+                            <td>{{ item['password'] }}</td>
+                            <td>{{ item['last_logon'] }}</td>
                             <td>{{ item['created_at'] }}</td>
-                            <td>{{ item['revised_at'] }}</td>
-                            <td>{{ item['file'] }}</td>
+                            <td>{{ item['is_admin'] }}</td>
+                            <td>{{ item['is_disabled'] }}</td>
                             <td class="flex">
-                            
                                 <button class="btn-action br" href="#">Edit</button>
                                 {% if session['is_admin'] %}
                                     &nbsp;|&nbsp;<button data-id="{{ item['id'] }}" id="item-delete" type="submit" class="btn-action-warn br">Delete</button>
@@ -59,7 +66,7 @@
     function reloadTable() {
         var xhr = new XMLHttpRequest();
 
-        xhr.open("GET", "/records", true);
+        xhr.open("GET", "/users", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = function () {
             if (xhr.status === 200) {
@@ -71,14 +78,18 @@
                     var row = document.createElement("tr");
                     row.innerHTML = `
                         <td>${data[i].id}</td>
-                        <td>${data[i].name}</td>
+                        <td>${data[i].username}</td>
+                        <td>${data[i].first_name}</td>
+                        <td>${data[i].last_name}</td>
+                        <td>${data[i].password}</td>
+                        <td>${data[i].last_logon}</td>
                         <td>${data[i].created_at}</td>
-                        <td>${data[i].revised_at}</td>
-                        <td>${data[i].file}</td>
+                        <td>${data[i].is_admin}</td>
+                        <td>${data[i].is_disabled}</td>
                         <td class="flex">
                             <button class="btn-action br" href="#">Edit</button>
                             {% if session_is_admin %}
-                                &nbsp;|&nbsp;<button id="item-delete" type="submit" class="btn-action-warn br">Delete</button>
+                                &nbsp;|&nbsp;<button data-id="${data[i].id}" id="item-delete" type="submit" class="btn-action-warn br">Delete</button>
                             {% endif %}
                         </td>
                     `;
@@ -94,7 +105,7 @@
             button.disabled = true;
 
             var xhr = new XMLHttpRequest();
-            xhr.open("DELETE", `/records/${id}`, true);
+            xhr.open("DELETE", `/users/${id}`, true);
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
