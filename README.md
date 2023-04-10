@@ -10,6 +10,10 @@ You will see several security flaws, and possibly many lax design choices. This 
 
 IDA, or ISS Data Archive, is a secure repository software that offers secure storage and access to information. Encrypted information is processed, decrypted on-premises, and stored in a secure local database. Authenticated users can access and optionally manipulate the data via a locally hosted web interface.
 
+## 🚶 Walkthrough
+
+We've prepared a video walkthrough! It is approximately 20 minutes in length, but it covers the entire project. You can find it on YouTube here [SSDCS Assignment2: IDA Walkthrough](https://youtu.be/DycRguLeBBg). The transcript is also available (it's a bit rough) in the `documents/updated` folder of this repository.
+
 ## 🤝 What is Team Transparency?
 
 Team Transparency is a group of students in the _University of Essex Online - Secure Software Development (PCOM7E January 2023)_ course.
