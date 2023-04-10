@@ -63,7 +63,7 @@ def records():
             return res
 
         elif request.method == 'POST':
-            endpoint_hit(LogEndpoint.RECORDS, LogMode.POST)
+            # endpoint_hit(LogEndpoint.RECORDS, LogMode.POST)
             load_dotenv()
 
             IDA_ISS_SHARED_KEY = os.getenv("IDA_ISS_SHARED_KEY")
