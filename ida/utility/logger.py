@@ -69,7 +69,6 @@ def create_log(level: LogLevel, message: str, author_username: str, is_system=Fa
         close_db(con)
         print(f"🚨[{LogLevel.ERROR.name}|🤖{SYSAUTHOR}] ({human_timestamp}) | {str(e)}")
 
-
     # def log_endpoint_hit(self, time):
     #     if self.is_endpoint:
     #         print(f"🎯[{self.mode.name}|{time}]{self.endpoint}")
