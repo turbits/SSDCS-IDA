@@ -118,8 +118,7 @@ Keep in mind that this is very much a prototype and is not production ready, and
 
 ## 📖 Reading Material
 
-- [Bottle Templating](https://bottlepy.org/docs/stable/stpl.html)
-- [pipenv Basics](https://pipenv-fork.readthedocs.io/en/latest/basics.html)
+- [Flask Documentation](https://flask.palletsprojects.com/en/2.2.x/)
 - [Microservices](https://microservices.io/)
 
 ## 🔠 Fonts
