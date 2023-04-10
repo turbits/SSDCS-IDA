@@ -37,4 +37,4 @@ ida.register_blueprint(users_bp)
 
 # =================== MAIN ===================
 if __name__ == '__main__':
-    ida.run(host=IDA_HOST, port=IDA_PORT, debug=False)
+    ida.run(host=IDA_HOST, port=IDA_PORT, debug=True)

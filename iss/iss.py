@@ -22,6 +22,7 @@ ISS_DEBUG = os.getenv("ISS_DEBUG")
 ISS_TARGET_URL = os.getenv("ISS_TARGET_URL")
 ISS_SEND_TIMEOUT = int(os.getenv("ISS_SEND_TIMEOUT"))
 ISS_SEND_DELAY = int(os.getenv("ISS_SEND_DELAY"))
+ISS_TOKEN = os.getenv("ISS_TOKEN")
 
 if not IDA_ISS_SHARED_KEY:
     raise ValueError("Fernet key not found in .env")
@@ -86,7 +87,7 @@ def send_data():
         # send the request to IDA
         print("🚀 ISS: Sending payload to IDA")
 
-        res = requests.post(ISS_TARGET_URL, data=payload, headers={"Content-Type": "application/text"}, timeout=ISS_SEND_TIMEOUT)
+        res = requests.post(ISS_TARGET_URL, data=payload, headers={"Content-Type": "application/text", "X-ISS-TOKEN": ISS_TOKEN}, timeout=ISS_SEND_TIMEOUT)
 
         print(f"🌍 ISS: Response from IDA: {res.status_code}\n{res.text}")
     except Exception as e:
@@ -110,4 +111,5 @@ if __name__ == '__main__':
     t.daemon = True
     t.start()
     # debug mode is off, otherwise for some reason the send_data gets called twice at the same time..
+    iss.run(host=ISS_HOST, port=ISS_PORT, debug=False)
     iss.run(host=ISS_HOST, port=ISS_PORT, debug=False)

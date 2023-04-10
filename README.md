@@ -72,12 +72,23 @@ For Windows: use Powershell or Git Bash to run commands (not CMD)
 ## 👀 Features
 
 - Sessions; a uuid and a username are stored as cookies. When endpoints require authentication or authorization, the uuid is checked against the database to see if it's valid. If it is, the user is authenticated/authorized.
-- Endpoint authorization; see previous
+- Endpoint authorization requirements; see previous
+- IP restriction on endpoints; would have to be extended to allow for a real-world scenario for the ISS to be able to hit the /records endpoint
+- ISS-only auth to the records 'POST' endpoint via secret token. Token is encrypted with the shared Fernet key and passed in as a header (X-ISS-TOKEN), then decrypted by IDA and validated
 - Login/logout
-- Dashboard to view records
-- ISS microservice that generates and sends a "data file" to the IDA /records CREATE endpoint every 10 seconds
+- Home page
+- Disabled users (not implemented)
+- Records view
+  - users can view records
+  - users can edit records (not implemented)
+- Users view (admin only)
+  - admins can delete users, and now can't delete their own account!
+  - admins can edit users (not implemented)
+- Logs view (admin only)
+  - admins can view logs
+- ISS microservice that generates and sends a "data file" to the IDA /records POST endpoint at a set interval (10 seconds by default)
 
-## ⚠️ Unimplemented Features
+## ⚠️ Wanted or Needed Features
 
 Keep in mind that this is very much a prototype and is not production ready, and could be improved in many ways. Some of these improvements are listed below.
 

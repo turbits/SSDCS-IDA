@@ -17,8 +17,8 @@ class LogEndpoint(Enum):
     USERS = 3
     LOGIN = 4
     LOGOUT = 5
-    DASHBOARD = 6
-    INDEX = 7
+    HOME = 6
+    RECORDSVIEW = 7
     USERSVIEW = 8
     LOGSVIEW = 9
 

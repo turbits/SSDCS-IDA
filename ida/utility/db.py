@@ -33,5 +33,5 @@ def check_if_user_admin(username):
         print(f"🔴 ERROR(DB): {str(e)}")
     finally:
         close_db(con)
-        print(f"DB: {username} is_admin: {is_admin}")
+        print(f"🔏 adminCheck: {username} is admin? {is_admin}")
         return is_admin

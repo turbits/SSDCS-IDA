@@ -37,7 +37,7 @@
                             <td class="flex">
                                 <button class="btn-action br" href="#">Edit</button>
                                 {% if session['is_admin'] %}
-                                    &nbsp;|&nbsp;<button data-id="{{ item['id'] }}" id="item-delete" type="submit" class="btn-action-warn br">Delete</button>
+                                    &nbsp;|&nbsp;<button data-id="{{ item['id'] }}" data-username="{{ item['username'] }}" id="item-delete" type="submit" class="btn-action-warn br">Delete</button>
                                 {% endif %}
                             </td>
                         </tr>
@@ -85,7 +85,7 @@
                         <td class="flex">
                             <button class="btn-action br" href="#">Edit</button>
                             {% if session['is_admin'] %}
-                                &nbsp;|&nbsp;<button data-id="${data[i].id}" id="item-delete" type="submit" class="btn-action-warn br">Delete</button>
+                                &nbsp;|&nbsp;<button data-id="${data[i].id}" data-username="${data[i].username}" id="item-delete" type="submit" class="btn-action-warn br">Delete</button>
                             {% endif %}
                         </td>
                     `;
@@ -97,12 +97,25 @@
     deleteButtons.forEach((button) => {
         button.addEventListener("click", (e) => {
             e.preventDefault();
-            var id = e.target.getAttribute('data-id');
             button.disabled = true;
+            var id = e.target.getAttribute('data-id');
+            var username = e.target.getAttribute('data-username');
+
+            console.log("id: " + id)
+            console.log("username: " + username)
+
+            if (username == "{{ session['username'] }}") {
+                alert("You cannot delete yourself!");
+                button.disabled = false;
+                return;
+            }
 
             var xhr = new XMLHttpRequest();
             xhr.open("DELETE", `/users/${id}`, true);
             xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("X-UUID", "{{ session['uuid'] }}")
+            xhr.setRequestHeader("X-USERNAME", "{{ session['username'] }}")
+            xhr.setRequestHeader("X-IS-ADMIN", "{{ session['is_admin'] }}")
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {

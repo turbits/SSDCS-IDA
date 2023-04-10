@@ -46,7 +46,7 @@ cursor.execute("INSERT INTO user_ref (uuid, user_id) VALUES (?, ?)", (str(uuid.u
 # CREATE TESTUSER
 cursor.execute("INSERT INTO users (username, first_name, last_name, password, last_logon, created_at, is_admin, is_disabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", ("user", "Test", "User", "user123", None, int(time.time()), False, False,))
 # get testuser id
-cursor.execute("SELECT * FROM users WHERE username = 'testuser'")
+cursor.execute("SELECT * FROM users WHERE username = 'user'")
 user = cursor.fetchone()
 user_id = user[0]
 user_username = user[1]
@@ -65,7 +65,7 @@ cursor.execute("INSERT INTO records (name, created_at, revised_at, file) VALUES 
 # CREATE LOGS TABLE
 cursor.execute("CREATE TABLE IF NOT EXISTS logs (id INTEGER PRIMARY KEY AUTOINCREMENT, level TEXT, message TEXT, created_at DATETIME, author_username TEXT)")
 # add initial LogEvent
-cursor.execute("INSERT INTO logs (level, message, created_at, author_username) VALUES (?, ?, ?, ?, ?)", ("INFO", "Initial LogEvent", int(time.time()), "SYSTEM",))
+cursor.execute("INSERT INTO logs (level, message, created_at, author_username) VALUES (?, ?, ?, ?)", ("INFO", "Initial LogEvent", int(time.time()), "SYSTEM",))
 
 # COMMIT & CLOSE con
 con.commit()

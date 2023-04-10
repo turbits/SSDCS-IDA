@@ -37,7 +37,6 @@ html, body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
   padding: 20px;
 }
 
@@ -277,12 +276,10 @@ form.reset {
 table {
   border: none;
   width: 100%;
-  padding: 20px;
-  margin: 50px auto;
+  max-width: 1000px;
+  margin: 50px 0;
   border-top-right-radius: var(--br);
   border-top-left-radius: var(--br);
-  table-layout: fixed;
-  word-break: break-word;
 }
 
 thead {
@@ -322,6 +319,10 @@ th, td {
   padding: 8px;
   border: 1px solid var(--color-light-darker);
   border: none;
+}
+
+td {
+  word-wrap: break-word;
 }
 
 th {

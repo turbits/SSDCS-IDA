@@ -14,8 +14,7 @@
                         <th>Level</th>
                         <th>Message</th>
                         <th>Created At</th>
-                        <th>Author ID</th>
-                        <th>Author Name</th>
+                        <th>Author Username</th>
                     </tr>
                 </thead>
                 <tbody id="item-table-body">
@@ -25,8 +24,7 @@
                             <td>{{ item['level'] }}</td>
                             <td>{{ item['message'] }}</td>
                             <td>{{ item['created_at'] }}</td>
-                            <td>{{ item['author_id'] }}</td>
-                            <td>{{ item['author_name'] }}</td>
+                            <td>{{ item['author_username'] }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -63,8 +61,7 @@
                         <td>${data[i].level}</td>
                         <td>${data[i].message}</td>
                         <td>${data[i].created_at}</td>
-                        <td>${data[i].author_id}</td>
-                        <td>${data[i].author_name}</td>
+                        <td>${data[i].author_username}</td>
                     `;
                 }
             }
@@ -80,6 +77,9 @@
             var xhr = new XMLHttpRequest();
             xhr.open("DELETE", `/logs/${id}`, true);
             xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("X-UUID", "{{ session['uuid'] }}")
+            xhr.setRequestHeader("X-USERNAME", "{{ session['username'] }}")
+            xhr.setRequestHeader("X-IS-ADMIN", "{{ session['is_admin'] }}")
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
