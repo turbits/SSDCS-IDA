@@ -26,8 +26,8 @@ def restrict_access():
 
 @users_bp.route('/users', methods=['GET', 'POST'])
 def users():
-    session_uuid = request.headers.get('uuid', None) or request.headers.get('X-UUID', None)
-    session_username = request.headers.get('username', None) or request.headers.get('X-USERNAME', None)
+    # session_uuid = request.headers.get('uuid', None) or request.headers.get('X-UUID', None)
+    # session_username = request.headers.get('username', None) or request.headers.get('X-USERNAME', None)
     session_is_admin = json.loads(str(request.headers.get('is_admin', False)).lower()) or json.loads(str(request.headers.get('X-IS-ADMIN', False)).lower())
 
     if session_is_admin is False:
