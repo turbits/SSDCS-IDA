@@ -34,7 +34,7 @@ cursor.execute("CREATE TABLE IF NOT EXISTS user_ref (id INTEGER PRIMARY KEY AUTO
 cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, first_name TEXT, last_name TEXT, password TEXT, last_logon INTEGER, created_at INTEGER, is_admin BOOLEAN, is_disabled BOOLEAN)")
 
 # CREAT DEFAULT ADMIN
-cursor.execute("INSERT INTO users (username, first_name, last_name, password, last_logon, created_at, is_admin, is_disabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", ('admin', 'Default', 'Admin', 'admin123', None, int(time.time()), True, False,))
+cursor.execute("INSERT INTO users (username, first_name, last_name, password, last_logon, created_at, is_admin, is_disabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", ("admin", "Default", "Admin", "admin123", None, int(time.time()), True, False,))
 # get admin id
 cursor.execute("SELECT * FROM users WHERE username = 'admin'")
 admin = cursor.fetchone()
@@ -44,7 +44,7 @@ admin_username = admin[1]
 cursor.execute("INSERT INTO user_ref (uuid, user_id) VALUES (?, ?)", (str(uuid.uuid4()), admin_id,))
 
 # CREATE TESTUSER
-cursor.execute("INSERT INTO users (username, first_name, last_name, password, last_logon, created_at, is_admin, is_disabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", ('user', 'Test', 'User', 'user123', None, int(time.time()), False, False,))
+cursor.execute("INSERT INTO users (username, first_name, last_name, password, last_logon, created_at, is_admin, is_disabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", ("user", "Test", "User", "user123", None, int(time.time()), False, False,))
 # get testuser id
 cursor.execute("SELECT * FROM users WHERE username = 'testuser'")
 user = cursor.fetchone()
@@ -63,9 +63,9 @@ cursor.execute("INSERT INTO records (name, created_at, revised_at, file) VALUES 
 # ===================== LOGS TABLE =====================
 # see models/log_event for the LogEvent model
 # CREATE LOGS TABLE
-cursor.execute("CREATE TABLE IF NOT EXISTS logs (id INTEGER PRIMARY KEY AUTOINCREMENT, level TEXT, message TEXT, created_at DATETIME, author_id INTEGER, author_name TEXT)")
+cursor.execute("CREATE TABLE IF NOT EXISTS logs (id INTEGER PRIMARY KEY AUTOINCREMENT, level TEXT, message TEXT, created_at DATETIME, author_username TEXT)")
 # add initial LogEvent
-cursor.execute("INSERT INTO logs (level, message, created_at, author_id, author_name) VALUES (?, ?, ?, ?, ?)", ('INFO', 'Initial LogEvent', int(time.time()), admin_id, admin_username,))
+cursor.execute("INSERT INTO logs (level, message, created_at, author_username) VALUES (?, ?, ?, ?, ?)", ("INFO", "Initial LogEvent", int(time.time()), "SYSTEM",))
 
 # COMMIT & CLOSE con
 con.commit()
