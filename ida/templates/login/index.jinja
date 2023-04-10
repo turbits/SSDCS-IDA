@@ -1,30 +1,22 @@
 {% include "includes/head.jinja" %}
 {% include "includes/nav.jinja" %}
-
 <div class="content">
-    <div class="content-inside">
-        <div class="content-header">
-            <h1>IDA System: Login</h1>
-        </div>
-
-        {% if session['uuid'] and session['username'] %}
-            <script>
-                window.location.href = "{{ url_for('pages.home') }}";
-            </script>
-        {% else %}
-            <form class="flex-form" action="{{ url_for('pages.login') }}" method="post">
-                <input class="form-input br" type="text" name="username" placeholder="Username"/>
-                <input class="form-input br" type="password" name="password" placeholder="Password"/>
-                <input class="form-input form-input-submit br" type="submit" value="Login"/>
-            </form>
-        {% endif %}
-
-        {% if error %}
-            <p class="error-message br">{{ error }}</p>
-        {% endif %}
-
-        {% if success %}
-            <p class="success-message br">{{ success }}</p>
-        {% endif %}
+    <div class="content-header">
+        <h1>IDA System: Login</h1>
     </div>
+
+    {% if session['uuid'] and session['username'] %}
+        <script>
+            window.location.href = "{{ url_for('pages.home') }}";
+        </script>
+    {% else %}
+        <form class="flex-form" action="{{ url_for('pages.login') }}" method="post">
+            <input class="form-input br" type="text" name="username" placeholder="Username"/>
+            <input class="form-input br" type="password" name="password" placeholder="Password"/>
+            <input class="form-input form-input-submit br" type="submit" value="Login"/>
+        </form>
+    {% endif %}
+
+    {% include "includes/messages.jinja" %}
 </div>
+{% include "includes/footer.jinja" %}

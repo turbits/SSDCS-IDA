@@ -5,7 +5,7 @@
         <h1>IDA System: Logs</h1>
     </div>
     
-    {% if session['uuid'] and session['username'] %}
+    {% if session['uuid'] and session['username'] and session['is_admin'] %}
         {% if data %}
             <table id="item-table" class="table table-striped">
                 <thead>
@@ -35,16 +35,12 @@
             <p class="info-message br">No data found.</p>
         {% endif %}
     {% else %}
-        <script>window.location.href = "{{ url_for('pages.login') }}";</script>
+        <script>window.location.href = "{{ url_for('pages.home') }}";</script>
     {% endif %}
 
-    {% if error %}
-        <p class="error-message br">{{ error }}</p>
-    {% endif %}
-    {% if success %}
-        <p class="success-message br">{{ success }}</p>
-    {% endif %}
+    {% include "includes/messages.jinja" %}
 </div>
+{% include "includes/footer.jinja" %}
 
 <script>
     var deleteButtons = document.querySelectorAll("#item-delete");

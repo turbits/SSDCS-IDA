@@ -5,7 +5,7 @@
   {% if session['username'] %}
   <div class="nav-item nav-item-container">
     <div class="flex-container">
-      <a href="{{ url_for('pages.dashboard') }}" class="nav-item nav-link btn-primary-rev br">🗃️ Records</a>
+      <a href="{{ url_for('pages.records_view') }}" class="nav-item nav-link btn-primary-rev br">🗃️ Records</a>
       {% if session['is_admin'] %}
         <a href="{{ url_for('pages.users_view') }}" class="nav-item nav-link btn-primary-rev br">👥 Users</a>
         <a href="{{ url_for('pages.logs_view') }}" class="nav-item nav-link btn-primary-rev br">🔏 Logs</a>
@@ -28,6 +28,6 @@
 </nav>
 {% if session['is_admin'] %}
   <div class="nav-status-bar">
-    <p>⚠️ This is an administrative session ⚠️</p>
+    <span>⚠️&nbsp;</span><p>This is an administrative session</p><span>&nbsp;⚠️</span>
   </div>
 {% endif %}

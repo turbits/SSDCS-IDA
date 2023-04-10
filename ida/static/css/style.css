@@ -32,19 +32,13 @@ html, body {
 }
 
 .content {
+  font-family: var(--font-sans);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-family: var(--font-sans);
-  width: 100%;
-}
-
-.content-inside {
   width: 100%;
   padding: 20px;
-  max-width: 1000px;
-  margin: 0 auto;
 }
 
 .content-header {
@@ -104,11 +98,11 @@ nav {
   margin: 0;
   padding: 0;
   background-color: var(--color-dark);
-  color: var(--color-light);
   height: 80px;
 }
 
 .nav-item {
+  color: var(--color-light);
   margin: 0 20px;
 }
 
@@ -152,14 +146,18 @@ nav {
   align-items: center;
   width: 100%;
   background-color: var(--color-orange);
-  color: var(--color-dark-darker);
 }
 
 .nav-status-bar p {
+  color: var(--color-dark-darker);
   padding: 4px 0;
   margin: 0;
 }
 
+.nav-status-bar span {
+  font-family: serif;
+  line-height: 1;
+}
 
 /* ====================== BUTTONS */
 .btn-primary {
@@ -279,11 +277,12 @@ form.reset {
 table {
   border: none;
   width: 100%;
-  max-width: 1000px;
   padding: 20px;
   margin: 50px auto;
   border-top-right-radius: var(--br);
   border-top-left-radius: var(--br);
+  table-layout: fixed;
+  word-break: break-word;
 }
 
 thead {

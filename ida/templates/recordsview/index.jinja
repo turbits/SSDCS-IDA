@@ -44,13 +44,9 @@
         <script>window.location.href = "{{ url_for('pages.login') }}";</script>
     {% endif %}
 
-    {% if error %}
-        <p class="error-message br">{{ error }}</p>
-    {% endif %}
-    {% if success %}
-        <p class="success-message br">{{ success }}</p>
-    {% endif %}
+    {% include "includes/messages.jinja" %}
 </div>
+{% include "includes/footer.jinja" %}
 
 <script>
     var deleteButtons = document.querySelectorAll("#item-delete");
@@ -77,7 +73,7 @@
                         <td>${data[i].file}</td>
                         <td class="flex">
                             <button class="btn-action br" href="#">Edit</button>
-                            {% if session_is_admin %}
+                            {% if session['is_admin'] %}
                                 &nbsp;|&nbsp;<button id="item-delete" type="submit" class="btn-action-warn br">Delete</button>
                             {% endif %}
                         </td>
