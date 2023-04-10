@@ -37,7 +37,7 @@ def records():
 
     try:
         if request.method == 'GET':
-            endpoint_hit(LogEndpoint.RECORDS, LogMode.GET)
+            endpoint_hit(endpoint=LogEndpoint.RECORDS, mode=LogMode.GET)
 
             if session_uuid is None or session_username is None:
                 abort(401, "You are not authorized to perform this action")
@@ -71,7 +71,7 @@ def records():
                 raise ValueError("Fernet key not found in .env")
             fernet = Fernet(IDA_ISS_SHARED_KEY.encode())
 
-            x_iss_token = fernet.decrypt(request.headers.get('X-ISS-TOKEN', None))
+            x_iss_token = request.headers.get("X-ISS-TOKEN", None)
             env_iss_token = os.getenv("ISS_TOKEN")
 
             is_iss_making_request = x_iss_token == env_iss_token
