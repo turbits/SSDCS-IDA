@@ -8,3 +8,6 @@ class User:
         self.created_at = created_at
         self.is_admin = is_admin
         self.is_disabled = is_disabled
+
+    def __str__(self):
+        return f"User(username={self.username}, first_name={self.first_name}, last_name={self.last_name}, last_logon={self.last_logon}, created_at={self.created_at}, is_admin={self.is_admin}, is_disabled={self.is_disabled})"

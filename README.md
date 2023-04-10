@@ -113,7 +113,6 @@ Keep in mind that this is very much a prototype and is not production ready, and
 | sqlite3 (database)                                        | 3.39.x         |
 | pip (python package installer)                            | 22.3.1, 23.0.1 |
 | virtualenv (lib - virtual Python environment builder)     | 20.19.0        |
-| pipenv (lib - Python dependency management)               | 2023.2.18      |
 | cryptography (lib - cryptographic recipes and primitives) | 39.0.1         |
 | requests (lib - 'Python HTTP for Humans')                 | 2.28.2         |
 
