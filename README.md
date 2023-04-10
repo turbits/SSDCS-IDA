@@ -35,8 +35,6 @@ For Windows: use Powershell or Git Bash to run commands (not CMD)
 ## ❗ Prerequisites
 
 - Install [Python 3](https://www.python.org/downloads/), version 3.11.2 or higher, ensure it is added to your PATH (MacOS might have issues with this, might need to do some research)
-- You should be linting your project with flake8 in your IDE
-  - You can ignore E501 (line too long), or if using vscode: suppress it in vscode by adding this to settings: `"flake8.args": ["--ignore=E501"],`
 - Restart your terminal (so PATH changes take effect)
 - Git clone this repository and navigate to the project root
 - Install virtualenv: `pip install virtualenv==20.19.0`
@@ -53,14 +51,14 @@ For Windows: use Powershell or Git Bash to run commands (not CMD)
 ## 🏃‍♂️ Running the project
 
 - Ensure you're in the virtual environment; usually `source ./venv/Scripts/activate`, otherwise see prerequisites above
-- Install all required packages as listed in the prerequisites section
+- Install all required packages as listed in the prerequisites section (`pip install -r requirements.txt`)
 - Run `python database.py` to create and seed the default database
-  - **NOTE: If you have one and you run this, it will overwrite it with default values.**
+  - **NOTE: If you have one and you run this, it may overwrite it with default values.**
   - Use a SQLite viewer like [SQLiteStudio](https://sqlitestudio.pl/)(Windows) or [DB Browser for SQLite](https://sqlitebrowser.org/)(All platforms) for a visual view of the database
 - Run `python ida/ida.py` to start the IDA app
 - Access the web interface at `http://127.0.0.1:8080/`
 - Open a new terminal window and activate the virtual environment in this window as well, `source ./venv/Scripts/activate`
-- Run `python iss/iss.py` in the new window to start the ISS microservice; this serves as a mock ISS. It runs on 127.0.0.1, port 8081, and sends a POST request to `IDA/records` to create a new record every 10 seconds.
+- Run `python iss/iss.py` in the new window to start the ISS microservice; this serves as a mock ISS. It runs on 127.0.0.1, port 8081, and sends a POST request to `IDA/records` to create a new record every 10 seconds by default.
 
 ## 👤 Logging Into IDA
 
