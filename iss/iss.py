@@ -112,4 +112,3 @@ if __name__ == '__main__':
     t.start()
     # debug mode is off, otherwise for some reason the send_data gets called twice at the same time..
     iss.run(host=ISS_HOST, port=ISS_PORT, debug=False)
-    iss.run(host=ISS_HOST, port=ISS_PORT, debug=False)
