@@ -13,7 +13,7 @@ from utility.validate_data import validate_data
 SYSAUTHOR = "SYSTEM"
 
 
-def endpoint_hit(endpoint: LogEndpoint, mode: LogMode, author_username: str, param_and_type: str = None):
+def endpoint_hit(endpoint: LogEndpoint, mode: LogMode, param_and_type: str = None):
     human_timestamp = datetime.fromtimestamp(int(time.time()))
 
     create_log(level=LogLevel.INFO, message=f"Endpoint hit: {str(endpoint.name).lower()}", author_username=SYSAUTHOR, is_system=False)
